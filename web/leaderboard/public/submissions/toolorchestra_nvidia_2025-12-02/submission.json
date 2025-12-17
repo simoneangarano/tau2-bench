@@ -1,11 +1,11 @@
 {
-  "model_name": "ToolOrchestra",
+  "model_name": "Nemotron-Orchestrator-8B",
   "model_organization": "NVIDIA",
   "submitting_organization": "NVIDIA",
   "submission_date": "2025-12-18",
   "contact_info": {
-    "email": "hjsu@cs.hku.hk",
-    "name": "H. Su"
+    "email": "sdiao@nvidia.com",
+    "name": "Shizhe Diao"
   },
   "is_new": true,
   "trajectories_available": true,
