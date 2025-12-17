@@ -2,7 +2,7 @@
   "timestamp": "2025-06-06T13:56:36.884085",
   "info": {
     "git_commit": "ade39493be54aad326a4c65295f77fe09780329b",
-    "num_trials": 4,
+    "num_trials": 1,
     "max_steps": 200,
     "max_errors": 10,
     "user_info": {
@@ -4478,7 +4478,14 @@
           "tool_calls": null,
           "turn_idx": 43
         }
-      ]
+      ],
+      "task_id": "0",
+      "trial": 0,
+      "start_time": "2025-01-01T00:00:00.000000",
+      "end_time": "2025-01-01T00:01:00.000000",
+      "duration": 60.0,
+      "timestamp": "2025-01-01T00:01:00.000000",
+      "termination_reason": "user_stop"
     },
     {
       "id": "ef684051-1b58-4a09-a0ec-93147a0dbe46",
@@ -5051,7 +5058,14 @@
           "tool_calls": null,
           "turn_idx": 39
         }
-      ]
+      ],
+      "task_id": "1",
+      "trial": 0,
+      "start_time": "2025-01-01T00:00:00.000000",
+      "end_time": "2025-01-01T00:01:00.000000",
+      "duration": 60.0,
+      "timestamp": "2025-01-01T00:01:00.000000",
+      "termination_reason": "user_stop"
     },
     {
       "id": "57e0468a-fe94-4634-8ce3-0a0ba743e7a9",
@@ -5483,7 +5497,14 @@
           "tool_calls": null,
           "turn_idx": 25
         }
-      ]
+      ],
+      "task_id": "2",
+      "trial": 0,
+      "start_time": "2025-01-01T00:00:00.000000",
+      "end_time": "2025-01-01T00:01:00.000000",
+      "duration": 60.0,
+      "timestamp": "2025-01-01T00:01:00.000000",
+      "termination_reason": "user_stop"
     },
     {
       "id": "f85a9e9a-a683-48d1-b80e-aa74c4236eb0",
@@ -6079,7 +6100,14 @@
           "tool_calls": null,
           "turn_idx": 39
         }
-      ]
+      ],
+      "task_id": "3",
+      "trial": 0,
+      "start_time": "2025-01-01T00:00:00.000000",
+      "end_time": "2025-01-01T00:01:00.000000",
+      "duration": 60.0,
+      "timestamp": "2025-01-01T00:01:00.000000",
+      "termination_reason": "user_stop"
     },
     {
       "id": "04d0ca56-5428-485c-8917-016b89001e2e",
@@ -6437,7 +6465,14 @@
           "tool_calls": null,
           "turn_idx": 23
         }
-      ]
+      ],
+      "task_id": "4",
+      "trial": 0,
+      "start_time": "2025-01-01T00:00:00.000000",
+      "end_time": "2025-01-01T00:01:00.000000",
+      "duration": 60.0,
+      "timestamp": "2025-01-01T00:01:00.000000",
+      "termination_reason": "user_stop"
     },
     {
       "id": "3cfbd835-0b6b-4354-b171-93cd92fba142",
@@ -6689,7 +6724,14 @@
           "tool_calls": null,
           "turn_idx": 13
         }
-      ]
+      ],
+      "task_id": "5",
+      "trial": 0,
+      "start_time": "2025-01-01T00:00:00.000000",
+      "end_time": "2025-01-01T00:01:00.000000",
+      "duration": 60.0,
+      "timestamp": "2025-01-01T00:01:00.000000",
+      "termination_reason": "user_stop"
     },
     {
       "id": "2a8edf8e-5d15-4c14-97b1-b864fb422aa7",
@@ -7117,7 +7159,14 @@
           "tool_calls": null,
           "turn_idx": 27
         }
-      ]
+      ],
+      "task_id": "6",
+      "trial": 0,
+      "start_time": "2025-01-01T00:00:00.000000",
+      "end_time": "2025-01-01T00:01:00.000000",
+      "duration": 60.0,
+      "timestamp": "2025-01-01T00:01:00.000000",
+      "termination_reason": "user_stop"
     },
     {
       "id": "c2b56a35-6124-4d50-acf0-6266e2ad353c",
@@ -7473,7 +7522,14 @@
           "tool_calls": null,
           "turn_idx": 19
         }
-      ]
+      ],
+      "task_id": "7",
+      "trial": 0,
+      "start_time": "2025-01-01T00:00:00.000000",
+      "end_time": "2025-01-01T00:01:00.000000",
+      "duration": 60.0,
+      "timestamp": "2025-01-01T00:01:00.000000",
+      "termination_reason": "user_stop"
     },
     {
       "id": "73d24917-a253-4318-8999-b1055e4eeef2",
@@ -8035,7 +8091,14 @@
           "tool_calls": null,
           "turn_idx": 38
         }
-      ]
+      ],
+      "task_id": "8",
+      "trial": 0,
+      "start_time": "2025-01-01T00:00:00.000000",
+      "end_time": "2025-01-01T00:01:00.000000",
+      "duration": 60.0,
+      "timestamp": "2025-01-01T00:01:00.000000",
+      "termination_reason": "user_stop"
     },
     {
       "id": "b4b14e23-494e-45c0-8963-2eff91e13e2a",
@@ -8658,7 +8721,14 @@
           "tool_calls": null,
           "turn_idx": 28
         }
-      ]
+      ],
+      "task_id": "9",
+      "trial": 0,
+      "start_time": "2025-01-01T00:00:00.000000",
+      "end_time": "2025-01-01T00:01:00.000000",
+      "duration": 60.0,
+      "timestamp": "2025-01-01T00:01:00.000000",
+      "termination_reason": "user_stop"
     },
     {
       "id": "0fd17dd8-eece-493c-8c15-51bc7f879958",
@@ -9343,7 +9413,14 @@
           "tool_calls": null,
           "turn_idx": 52
         }
-      ]
+      ],
+      "task_id": "10",
+      "trial": 0,
+      "start_time": "2025-01-01T00:00:00.000000",
+      "end_time": "2025-01-01T00:01:00.000000",
+      "duration": 60.0,
+      "timestamp": "2025-01-01T00:01:00.000000",
+      "termination_reason": "user_stop"
     },
     {
       "id": "1757362e-a40a-4cfc-9529-265657df46b4",
@@ -9639,7 +9716,14 @@
           "tool_calls": null,
           "turn_idx": 21
         }
-      ]
+      ],
+      "task_id": "11",
+      "trial": 0,
+      "start_time": "2025-01-01T00:00:00.000000",
+      "end_time": "2025-01-01T00:01:00.000000",
+      "duration": 60.0,
+      "timestamp": "2025-01-01T00:01:00.000000",
+      "termination_reason": "user_stop"
     },
     {
       "id": "717c894c-1550-4244-abb9-b090339ae12d",
@@ -9795,7 +9879,14 @@
           "tool_calls": null,
           "turn_idx": 13
         }
-      ]
+      ],
+      "task_id": "12",
+      "trial": 0,
+      "start_time": "2025-01-01T00:00:00.000000",
+      "end_time": "2025-01-01T00:01:00.000000",
+      "duration": 60.0,
+      "timestamp": "2025-01-01T00:01:00.000000",
+      "termination_reason": "user_stop"
     },
     {
       "id": "732ee7d4-bf91-489a-a340-68338312cca7",
@@ -9979,7 +10070,14 @@
           "tool_calls": null,
           "turn_idx": 14
         }
-      ]
+      ],
+      "task_id": "13",
+      "trial": 0,
+      "start_time": "2025-01-01T00:00:00.000000",
+      "end_time": "2025-01-01T00:01:00.000000",
+      "duration": 60.0,
+      "timestamp": "2025-01-01T00:01:00.000000",
+      "termination_reason": "user_stop"
     },
     {
       "id": "061def98-aef5-44a2-a00a-450eaaeceb16",
@@ -10251,7 +10349,14 @@
           "tool_calls": null,
           "turn_idx": 18
         }
-      ]
+      ],
+      "task_id": "14",
+      "trial": 0,
+      "start_time": "2025-01-01T00:00:00.000000",
+      "end_time": "2025-01-01T00:01:00.000000",
+      "duration": 60.0,
+      "timestamp": "2025-01-01T00:01:00.000000",
+      "termination_reason": "user_stop"
     },
     {
       "id": "bb790ea6-39a6-48da-b033-faf1f5ba6ddf",
@@ -10384,7 +10489,14 @@
           "tool_calls": null,
           "turn_idx": 9
         }
-      ]
+      ],
+      "task_id": "15",
+      "trial": 0,
+      "start_time": "2025-01-01T00:00:00.000000",
+      "end_time": "2025-01-01T00:01:00.000000",
+      "duration": 60.0,
+      "timestamp": "2025-01-01T00:01:00.000000",
+      "termination_reason": "user_stop"
     },
     {
       "id": "e221ccf9-8d0b-4373-886c-4ba123ec13f9",
@@ -10592,7 +10704,14 @@
           "tool_calls": null,
           "turn_idx": 17
         }
-      ]
+      ],
+      "task_id": "16",
+      "trial": 0,
+      "start_time": "2025-01-01T00:00:00.000000",
+      "end_time": "2025-01-01T00:01:00.000000",
+      "duration": 60.0,
+      "timestamp": "2025-01-01T00:01:00.000000",
+      "termination_reason": "user_stop"
     },
     {
       "id": "3099a9a0-24e9-4b78-be33-10c95c5da175",
@@ -10844,7 +10963,14 @@
           "tool_calls": null,
           "turn_idx": 17
         }
-      ]
+      ],
+      "task_id": "17",
+      "trial": 0,
+      "start_time": "2025-01-01T00:00:00.000000",
+      "end_time": "2025-01-01T00:01:00.000000",
+      "duration": 60.0,
+      "timestamp": "2025-01-01T00:01:00.000000",
+      "termination_reason": "user_stop"
     },
     {
       "id": "3d199eb7-059a-4a38-9cc9-67e36fa2ac70",
@@ -11215,7 +11341,14 @@
           "tool_calls": null,
           "turn_idx": 23
         }
-      ]
+      ],
+      "task_id": "18",
+      "trial": 0,
+      "start_time": "2025-01-01T00:00:00.000000",
+      "end_time": "2025-01-01T00:01:00.000000",
+      "duration": 60.0,
+      "timestamp": "2025-01-01T00:01:00.000000",
+      "termination_reason": "user_stop"
     },
     {
       "id": "2a6966f8-b85f-4148-be38-cddf16dab1fc",
@@ -11491,7 +11624,14 @@
           "tool_calls": null,
           "turn_idx": 18
         }
-      ]
+      ],
+      "task_id": "19",
+      "trial": 0,
+      "start_time": "2025-01-01T00:00:00.000000",
+      "end_time": "2025-01-01T00:01:00.000000",
+      "duration": 60.0,
+      "timestamp": "2025-01-01T00:01:00.000000",
+      "termination_reason": "user_stop"
     },
     {
       "id": "5e5b9f0e-522c-4ffc-98e0-4399cf8bfcff",
@@ -11846,7 +11986,14 @@
           "tool_calls": null,
           "turn_idx": 27
         }
-      ]
+      ],
+      "task_id": "20",
+      "trial": 0,
+      "start_time": "2025-01-01T00:00:00.000000",
+      "end_time": "2025-01-01T00:01:00.000000",
+      "duration": 60.0,
+      "timestamp": "2025-01-01T00:01:00.000000",
+      "termination_reason": "user_stop"
     },
     {
       "id": "00b712d1-f32a-403f-bae1-7bfbac84b6a2",
@@ -12179,7 +12326,14 @@
           "tool_calls": null,
           "turn_idx": 16
         }
-      ]
+      ],
+      "task_id": "21",
+      "trial": 0,
+      "start_time": "2025-01-01T00:00:00.000000",
+      "end_time": "2025-01-01T00:01:00.000000",
+      "duration": 60.0,
+      "timestamp": "2025-01-01T00:01:00.000000",
+      "termination_reason": "user_stop"
     },
     {
       "id": "3bb53b6d-a405-45aa-b976-27d2cdcfd7dd",
@@ -14079,7 +14233,14 @@
           "tool_calls": null,
           "turn_idx": 126
         }
-      ]
+      ],
+      "task_id": "22",
+      "trial": 0,
+      "start_time": "2025-01-01T00:00:00.000000",
+      "end_time": "2025-01-01T00:01:00.000000",
+      "duration": 60.0,
+      "timestamp": "2025-01-01T00:01:00.000000",
+      "termination_reason": "user_stop"
     },
     {
       "id": "a77b4d53-ea92-4433-a4b4-8416b0ccc845",
@@ -14177,7 +14338,14 @@
           "tool_calls": null,
           "turn_idx": 7
         }
-      ]
+      ],
+      "task_id": "23",
+      "trial": 0,
+      "start_time": "2025-01-01T00:00:00.000000",
+      "end_time": "2025-01-01T00:01:00.000000",
+      "duration": 60.0,
+      "timestamp": "2025-01-01T00:01:00.000000",
+      "termination_reason": "user_stop"
     },
     {
       "id": "dc1f919d-4013-4d1a-b587-72b01c1846f3",
@@ -14410,7 +14578,14 @@
           "tool_calls": null,
           "turn_idx": 16
         }
-      ]
+      ],
+      "task_id": "24",
+      "trial": 0,
+      "start_time": "2025-01-01T00:00:00.000000",
+      "end_time": "2025-01-01T00:01:00.000000",
+      "duration": 60.0,
+      "timestamp": "2025-01-01T00:01:00.000000",
+      "termination_reason": "user_stop"
     },
     {
       "id": "a4eed615-e679-47d0-b682-ca8a3aed8c34",
@@ -14937,7 +15112,14 @@
           "tool_calls": null,
           "turn_idx": 38
         }
-      ]
+      ],
+      "task_id": "25",
+      "trial": 0,
+      "start_time": "2025-01-01T00:00:00.000000",
+      "end_time": "2025-01-01T00:01:00.000000",
+      "duration": 60.0,
+      "timestamp": "2025-01-01T00:01:00.000000",
+      "termination_reason": "user_stop"
     },
     {
       "id": "db46dce4-e1b6-46de-a40d-251c7a3182af",
@@ -15334,7 +15516,14 @@
           "tool_calls": null,
           "turn_idx": 24
         }
-      ]
+      ],
+      "task_id": "26",
+      "trial": 0,
+      "start_time": "2025-01-01T00:00:00.000000",
+      "end_time": "2025-01-01T00:01:00.000000",
+      "duration": 60.0,
+      "timestamp": "2025-01-01T00:01:00.000000",
+      "termination_reason": "user_stop"
     },
     {
       "id": "2979aaca-f25a-4d44-89cc-873c3c910b8d",
@@ -15672,7 +15861,14 @@
           "tool_calls": null,
           "turn_idx": 20
         }
-      ]
+      ],
+      "task_id": "27",
+      "trial": 0,
+      "start_time": "2025-01-01T00:00:00.000000",
+      "end_time": "2025-01-01T00:01:00.000000",
+      "duration": 60.0,
+      "timestamp": "2025-01-01T00:01:00.000000",
+      "termination_reason": "user_stop"
     },
     {
       "id": "3f321bf4-ab0d-4616-9e55-efde1b1d790c",
@@ -15958,7 +16154,14 @@
           "tool_calls": null,
           "turn_idx": 19
         }
-      ]
+      ],
+      "task_id": "28",
+      "trial": 0,
+      "start_time": "2025-01-01T00:00:00.000000",
+      "end_time": "2025-01-01T00:01:00.000000",
+      "duration": 60.0,
+      "timestamp": "2025-01-01T00:01:00.000000",
+      "termination_reason": "user_stop"
     },
     {
       "id": "c737f3c6-02b2-4ab5-8cf8-7470fe6e6677",
@@ -16281,7 +16484,14 @@
           "tool_calls": null,
           "turn_idx": 22
         }
-      ]
+      ],
+      "task_id": "29",
+      "trial": 0,
+      "start_time": "2025-01-01T00:00:00.000000",
+      "end_time": "2025-01-01T00:01:00.000000",
+      "duration": 60.0,
+      "timestamp": "2025-01-01T00:01:00.000000",
+      "termination_reason": "user_stop"
     },
     {
       "id": "bcc46ec3-c79a-40d6-b258-020378fab735",
@@ -16486,7 +16696,14 @@
           "tool_calls": null,
           "turn_idx": 17
         }
-      ]
+      ],
+      "task_id": "30",
+      "trial": 0,
+      "start_time": "2025-01-01T00:00:00.000000",
+      "end_time": "2025-01-01T00:01:00.000000",
+      "duration": 60.0,
+      "timestamp": "2025-01-01T00:01:00.000000",
+      "termination_reason": "user_stop"
     },
     {
       "id": "d0d4f015-fccb-4137-879c-7b68247a9cf2",
@@ -17151,7 +17368,14 @@
           "tool_calls": null,
           "turn_idx": 48
         }
-      ]
+      ],
+      "task_id": "31",
+      "trial": 0,
+      "start_time": "2025-01-01T00:00:00.000000",
+      "end_time": "2025-01-01T00:01:00.000000",
+      "duration": 60.0,
+      "timestamp": "2025-01-01T00:01:00.000000",
+      "termination_reason": "user_stop"
     },
     {
       "id": "bbdff6a1-1802-47bf-9c6f-bef71dec7731",
@@ -17379,7 +17603,14 @@
           "tool_calls": null,
           "turn_idx": 13
         }
-      ]
+      ],
+      "task_id": "32",
+      "trial": 0,
+      "start_time": "2025-01-01T00:00:00.000000",
+      "end_time": "2025-01-01T00:01:00.000000",
+      "duration": 60.0,
+      "timestamp": "2025-01-01T00:01:00.000000",
+      "termination_reason": "user_stop"
     },
     {
       "id": "6b07e302-26f2-4918-bde8-465691e4b743",
@@ -17739,7 +17970,14 @@
           "tool_calls": null,
           "turn_idx": 17
         }
-      ]
+      ],
+      "task_id": "33",
+      "trial": 0,
+      "start_time": "2025-01-01T00:00:00.000000",
+      "end_time": "2025-01-01T00:01:00.000000",
+      "duration": 60.0,
+      "timestamp": "2025-01-01T00:01:00.000000",
+      "termination_reason": "user_stop"
     },
     {
       "id": "c561b2a2-f1e2-48f1-9594-7a2e7147e217",
@@ -18051,7 +18289,14 @@
           "tool_calls": null,
           "turn_idx": 14
         }
-      ]
+      ],
+      "task_id": "34",
+      "trial": 0,
+      "start_time": "2025-01-01T00:00:00.000000",
+      "end_time": "2025-01-01T00:01:00.000000",
+      "duration": 60.0,
+      "timestamp": "2025-01-01T00:01:00.000000",
+      "termination_reason": "user_stop"
     },
     {
       "id": "5879f398-5772-4b24-b433-55054eddee63",
@@ -18456,7 +18701,14 @@
           "tool_calls": null,
           "turn_idx": 31
         }
-      ]
+      ],
+      "task_id": "35",
+      "trial": 0,
+      "start_time": "2025-01-01T00:00:00.000000",
+      "end_time": "2025-01-01T00:01:00.000000",
+      "duration": 60.0,
+      "timestamp": "2025-01-01T00:01:00.000000",
+      "termination_reason": "user_stop"
     },
     {
       "id": "6286f787-daf6-403f-9ccb-410116aae0e2",
@@ -18664,7 +18916,14 @@
           "tool_calls": null,
           "turn_idx": 17
         }
-      ]
+      ],
+      "task_id": "36",
+      "trial": 0,
+      "start_time": "2025-01-01T00:00:00.000000",
+      "end_time": "2025-01-01T00:01:00.000000",
+      "duration": 60.0,
+      "timestamp": "2025-01-01T00:01:00.000000",
+      "termination_reason": "user_stop"
     },
     {
       "id": "dcafbf64-f9af-4c60-a0ff-8355e79c0425",
@@ -19588,7 +19847,14 @@
           "tool_calls": null,
           "turn_idx": 41
         }
-      ]
+      ],
+      "task_id": "37",
+      "trial": 0,
+      "start_time": "2025-01-01T00:00:00.000000",
+      "end_time": "2025-01-01T00:01:00.000000",
+      "duration": 60.0,
+      "timestamp": "2025-01-01T00:01:00.000000",
+      "termination_reason": "user_stop"
     },
     {
       "id": "6f044717-0a2f-49ce-95f5-21d207cf9c4d",
@@ -19953,7 +20219,14 @@
           "tool_calls": null,
           "turn_idx": 19
         }
-      ]
+      ],
+      "task_id": "38",
+      "trial": 0,
+      "start_time": "2025-01-01T00:00:00.000000",
+      "end_time": "2025-01-01T00:01:00.000000",
+      "duration": 60.0,
+      "timestamp": "2025-01-01T00:01:00.000000",
+      "termination_reason": "user_stop"
     },
     {
       "id": "5607db83-c0b8-48da-a606-1af5203f91be",
@@ -20175,7 +20448,14 @@
           "tool_calls": null,
           "turn_idx": 17
         }
-      ]
+      ],
+      "task_id": "39",
+      "trial": 0,
+      "start_time": "2025-01-01T00:00:00.000000",
+      "end_time": "2025-01-01T00:01:00.000000",
+      "duration": 60.0,
+      "timestamp": "2025-01-01T00:01:00.000000",
+      "termination_reason": "user_stop"
     },
     {
       "id": "ee4b2ead-afcc-44b4-a117-64db15dfe660",
@@ -20513,7 +20793,14 @@
           "tool_calls": null,
           "turn_idx": 20
         }
-      ]
+      ],
+      "task_id": "40",
+      "trial": 0,
+      "start_time": "2025-01-01T00:00:00.000000",
+      "end_time": "2025-01-01T00:01:00.000000",
+      "duration": 60.0,
+      "timestamp": "2025-01-01T00:01:00.000000",
+      "termination_reason": "user_stop"
     },
     {
       "id": "dbd1cc60-d750-4be6-a38d-352cd9df5a89",
@@ -20703,7 +20990,14 @@
           "tool_calls": null,
           "turn_idx": 13
         }
-      ]
+      ],
+      "task_id": "41",
+      "trial": 0,
+      "start_time": "2025-01-01T00:00:00.000000",
+      "end_time": "2025-01-01T00:01:00.000000",
+      "duration": 60.0,
+      "timestamp": "2025-01-01T00:01:00.000000",
+      "termination_reason": "user_stop"
     },
     {
       "id": "f3b73c8e-4a2b-40f5-8639-de6c87182c45",
@@ -20873,7 +21167,14 @@
           "tool_calls": null,
           "turn_idx": 15
         }
-      ]
+      ],
+      "task_id": "42",
+      "trial": 0,
+      "start_time": "2025-01-01T00:00:00.000000",
+      "end_time": "2025-01-01T00:01:00.000000",
+      "duration": 60.0,
+      "timestamp": "2025-01-01T00:01:00.000000",
+      "termination_reason": "user_stop"
     },
     {
       "id": "8d32009a-80d3-4800-82f3-2a5ba4415dcd",
@@ -21183,7 +21484,14 @@
           "tool_calls": null,
           "turn_idx": 24
         }
-      ]
+      ],
+      "task_id": "43",
+      "trial": 0,
+      "start_time": "2025-01-01T00:00:00.000000",
+      "end_time": "2025-01-01T00:01:00.000000",
+      "duration": 60.0,
+      "timestamp": "2025-01-01T00:01:00.000000",
+      "termination_reason": "user_stop"
     },
     {
       "id": "a89bd58a-3e10-4a66-934d-16d4e7e9befa",
@@ -21354,7 +21662,14 @@
           "tool_calls": null,
           "turn_idx": 9
         }
-      ]
+      ],
+      "task_id": "44",
+      "trial": 0,
+      "start_time": "2025-01-01T00:00:00.000000",
+      "end_time": "2025-01-01T00:01:00.000000",
+      "duration": 60.0,
+      "timestamp": "2025-01-01T00:01:00.000000",
+      "termination_reason": "user_stop"
     },
     {
       "id": "f13cbed2-cbae-459e-bc97-9dfeec256e89",
@@ -21818,7 +22133,14 @@
           "tool_calls": null,
           "turn_idx": 25
         }
-      ]
+      ],
+      "task_id": "45",
+      "trial": 0,
+      "start_time": "2025-01-01T00:00:00.000000",
+      "end_time": "2025-01-01T00:01:00.000000",
+      "duration": 60.0,
+      "timestamp": "2025-01-01T00:01:00.000000",
+      "termination_reason": "user_stop"
     },
     {
       "id": "690c8a71-ec6f-44d5-85ee-7f477fdeb367",
@@ -22610,7 +22932,14 @@
           "tool_calls": null,
           "turn_idx": 42
         }
-      ]
+      ],
+      "task_id": "46",
+      "trial": 0,
+      "start_time": "2025-01-01T00:00:00.000000",
+      "end_time": "2025-01-01T00:01:00.000000",
+      "duration": 60.0,
+      "timestamp": "2025-01-01T00:01:00.000000",
+      "termination_reason": "user_stop"
     },
     {
       "id": "ff947a40-33f4-4eaa-92bf-1aaea5d8b5c1",
@@ -23133,7 +23462,14 @@
           "tool_calls": null,
           "turn_idx": 27
         }
-      ]
+      ],
+      "task_id": "47",
+      "trial": 0,
+      "start_time": "2025-01-01T00:00:00.000000",
+      "end_time": "2025-01-01T00:01:00.000000",
+      "duration": 60.0,
+      "timestamp": "2025-01-01T00:01:00.000000",
+      "termination_reason": "user_stop"
     },
     {
       "id": "87cd0f1b-de8c-4000-a2de-c24c42b8d475",
@@ -23356,7 +23692,14 @@
           "tool_calls": null,
           "turn_idx": 19
         }
-      ]
+      ],
+      "task_id": "48",
+      "trial": 0,
+      "start_time": "2025-01-01T00:00:00.000000",
+      "end_time": "2025-01-01T00:01:00.000000",
+      "duration": 60.0,
+      "timestamp": "2025-01-01T00:01:00.000000",
+      "termination_reason": "user_stop"
     },
     {
       "id": "0002f65d-2e02-443f-aa7c-cf89ee75d535",
@@ -23844,7 +24187,14 @@
           "tool_calls": null,
           "turn_idx": 31
         }
-      ]
+      ],
+      "task_id": "49",
+      "trial": 0,
+      "start_time": "2025-01-01T00:00:00.000000",
+      "end_time": "2025-01-01T00:01:00.000000",
+      "duration": 60.0,
+      "timestamp": "2025-01-01T00:01:00.000000",
+      "termination_reason": "user_stop"
     }
   ]
 }

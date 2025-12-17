@@ -44,6 +44,11 @@
   "references": [
     {
       "title": "ToolOrchestra: Elevating Intelligence via Efficient Model and Tool Orchestration",
+      "url": "https://arxiv.org/abs/2511.21689",
+      "type": "paper"
+    },
+    {
+      "title": "ToolOrchestra GitHub Repository",
       "url": "https://github.com/NVlabs/ToolOrchestra",
       "type": "github"
     }
