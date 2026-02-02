@@ -1,0 +1,13 @@
+{
+  "id": "note_83edd413",
+  "note": "Authentication failed. User spelled it out as requested. Agent transcription error for \"A A\" (repeatedly).",
+  "author_email": "keshav@sierra.ai",
+  "created_at": "2026-01-26T13:53:11.014129",
+  "simulation_id": "cfbdc7f4-851b-489e-8ca7-8a8791a82fa8",
+  "task_id": "49",
+  "trial": 0,
+  "source_results_file": "retail_control_xai",
+  "simulation_file": "task_49_note_83edd413_simulation.json",
+  "error_source": "agent",
+  "error_type": "transcription"
+}

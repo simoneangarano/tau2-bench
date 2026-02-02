@@ -1,0 +1,13 @@
+{
+  "id": "note_247d999f",
+  "note": "Agent appears to mistranscribe user's cancellation request and responds with \"all set!\" without completing the action.",
+  "author_email": "soham@sierra.ai",
+  "created_at": "2026-01-26T16:32:42.031427",
+  "simulation_id": "1b67683e-9842-400b-83ab-50141317a3ee",
+  "task_id": "30",
+  "trial": 0,
+  "source_results_file": "retail_control_openai",
+  "simulation_file": "task_30_note_247d999f_simulation.json",
+  "error_source": "agent",
+  "error_type": "transcription"
+}

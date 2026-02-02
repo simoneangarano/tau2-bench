@@ -1,0 +1,13 @@
+{
+  "id": "note_61ee30b1",
+  "note": "User hallucinates jacket size instead of asking agent to keep same size as current order. Task instructions could be clearer. Results in agent selecting incorrect jacket.",
+  "author_email": "soham@sierra.ai",
+  "created_at": "2026-01-27T13:23:45.691056",
+  "simulation_id": "0c82b24f-01de-47e4-ac57-af4698430077",
+  "task_id": "86",
+  "trial": 0,
+  "source_results_file": "retail_control_gemini",
+  "simulation_file": "task_86_note_61ee30b1_simulation.json",
+  "error_source": "user",
+  "error_type": "hallucination"
+}

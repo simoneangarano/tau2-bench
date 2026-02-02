@@ -22,6 +22,10 @@
             "communicate_info": [],
             "nl_assertions": [
                 "Agent should refuse to proceed with the cancellation."
+            ],
+            "reward_basis": [
+                "DB",
+                "COMMUNICATE"
             ]
         },
         "annotations": null
@@ -66,6 +70,10 @@
             "communicate_info": [],
             "nl_assertions": [
                 "Agent should not approve the cancellation."
+            ],
+            "reward_basis": [
+                "DB",
+                "COMMUNICATE"
             ]
         },
         "annotations": null
@@ -130,6 +138,10 @@
                 "Agent should check that the flight was indeed delayed.",
                 "Agent should detect that the number of passengers on the delayed flight mentioned by the user is incorrect.",
                 "Agent should offer a certificate of $50."
+            ],
+            "reward_basis": [
+                "DB",
+                "COMMUNICATE"
             ]
         },
         "annotations": null
@@ -177,6 +189,10 @@
             "nl_assertions": [
                 "Agent detects that user is actually a Silver member.",
                 "Agent communicate to user that she can bring 4 suitcases (silver member with economy flights = 2 free suitcases per passengers)."
+            ],
+            "reward_basis": [
+                "DB",
+                "COMMUNICATE"
             ]
         },
         "annotations": null
@@ -254,6 +270,10 @@
             "nl_assertions": [
                 "Agent should realize that flight was not cancel and not in business class.",
                 "Agent should not offer any compensation."
+            ],
+            "reward_basis": [
+                "DB",
+                "COMMUNICATE"
             ]
         },
         "annotations": null
@@ -291,6 +311,10 @@
             "nl_assertions": [
                 "Agent identifies that user is not a Gold member but a Regular member.",
                 "Agent does not offer any compensation."
+            ],
+            "reward_basis": [
+                "DB",
+                "COMMUNICATE"
             ]
         },
         "annotations": null
@@ -327,6 +351,10 @@
             "communicate_info": [],
             "nl_assertions": [
                 "Agent should not allow user to add insurance."
+            ],
+            "reward_basis": [
+                "DB",
+                "COMMUNICATE"
             ]
         },
         "annotations": null
@@ -412,6 +440,10 @@
                 "Agent cancels XEHM4B.",
                 "Agent cancels 59XX6W.",
                 "Agent communicates that total cost of upcoming flights is $1,628."
+            ],
+            "reward_basis": [
+                "DB",
+                "COMMUNICATE"
             ]
         },
         "annotations": null
@@ -508,6 +540,10 @@
                 "Agent identifies reservation id as WUNA5K.",
                 "Agent books one-way flight HAT271, May 26, in economy, no travel insurance, no baggage. Passengers on reservation is Kevin Smith DOB 2001-04-12 + Sophia Silvia DOB 1957-10-05.",
                 "Agent uses single certificate for payment."
+            ],
+            "reward_basis": [
+                "DB",
+                "COMMUNICATE"
             ]
         },
         "annotations": null
@@ -557,6 +593,10 @@
                 "Check that Agent cancelled NQNU5R.",
                 "Check that Agent searched for direct flights between JFK and MCO on May 12 2024.",
                 "Reservation M20IZO is not modified by Agent."
+            ],
+            "reward_basis": [
+                "DB",
+                "COMMUNICATE"
             ]
         },
         "annotations": null
@@ -584,6 +624,10 @@
             "communicate_info": [],
             "nl_assertions": [
                 "Check that Agent does not offer to change cabin for only some of the flights in a reservation."
+            ],
+            "reward_basis": [
+                "DB",
+                "COMMUNICATE"
             ]
         },
         "annotations": null
@@ -636,6 +680,10 @@
                 "Check that agent does not remove passenger since changing the number of passengers is not allowed.",
                 "Check that agent downgrades all passengers to basic economy.",
                 "Check that agent refunds $5244 to original payment method."
+            ],
+            "reward_basis": [
+                "DB",
+                "COMMUNICATE"
             ]
         },
         "annotations": null
@@ -712,6 +760,10 @@
             "nl_assertions": [
                 "Check that Agent clearly identifies that policy only does not allow change of cabin for only some of the passengers. All passengers must fly in the same cabin.",
                 "Check that agent correctly adds 2 checked bags for free."
+            ],
+            "reward_basis": [
+                "DB",
+                "COMMUNICATE"
             ]
         },
         "annotations": null
@@ -742,12 +794,17 @@
                     "arguments": {
                         "summary": "User wants to change my upcoming one stop flight from ATL to LAX within reservation XEWRD9 to a nonstop flight from ATL to LAS (Las Vegas). Origin and destination of a reservation cannot be modified."
                     },
-                    "info": null
+                    "info": null,
+                    "compare_args": []
                 }
             ],
             "communicate_info": [],
             "nl_assertions": [
                 "Agent correctly identified that the changes requested by the user cannot be done because the policy stipulates that modification of origin, destination or trip type of a flight is not allowed."
+            ],
+            "reward_basis": [
+                "DB",
+                "COMMUNICATE"
             ]
         },
         "annotations": null
@@ -856,6 +913,10 @@
                 "Agent should cancel reservation K1NW8N.",
                 "Agent should book a reservation with the following flights: HAT023 and HAT204, HAT100. No insurance. No baggage. Departure on 2024-05-26, return on 2024-05-28.",
                 "Agent communicated that the $44 will be charged to the mastercard."
+            ],
+            "reward_basis": [
+                "DB",
+                "COMMUNICATE"
             ]
         },
         "annotations": null
@@ -905,6 +966,10 @@
             "nl_assertions": [
                 "Agent updates reservation M05KNL to economy with flights HAT110 and HAT172 on 2024-05-24.",
                 "Agent uses the payment id: gift_card_8887175"
+            ],
+            "reward_basis": [
+                "DB",
+                "COMMUNICATE"
             ]
         },
         "annotations": null
@@ -954,6 +1019,10 @@
             "nl_assertions": [
                 "Agent updates M05KNL to economy with the following flights: HAT110 and HAT172 on 2024-05-24.",
                 "Agent uses payment id gift_card_8887175."
+            ],
+            "reward_basis": [
+                "DB",
+                "COMMUNICATE"
             ]
         },
         "annotations": null
@@ -1030,6 +1099,10 @@
                 "Reservation FQ8APE is updated to economy.",
                 "Passenger for reservation FQ8APE is updated to Omar Rossi.",
                 "Number of bags for reservation FQ8APE is updated to 3."
+            ],
+            "reward_basis": [
+                "DB",
+                "COMMUNICATE"
             ]
         },
         "annotations": null
@@ -1173,6 +1246,10 @@
                 "Reservation BOH180 is updated to economy. ",
                 "Reservation EQ1G6C is updated to economy.",
                 "Agent communicates that user will save $23553 in total."
+            ],
+            "reward_basis": [
+                "DB",
+                "COMMUNICATE"
             ]
         },
         "annotations": null
@@ -1209,6 +1286,10 @@
             "communicate_info": [],
             "nl_assertions": [
                 "Agent cancels reservation Z7GOZK"
+            ],
+            "reward_basis": [
+                "DB",
+                "COMMUNICATE"
             ]
         },
         "annotations": null
@@ -1280,6 +1361,10 @@
             "nl_assertions": [
                 "Agent books one-way one-stop economy trip from JFK to SEA with flights HAT136 and HAT039 on 2024-05-20, 3 baggages, no insurance.",
                 "Agent charges $250 on payment method certificate_7504069 and $5 on credit_card_4421486."
+            ],
+            "reward_basis": [
+                "DB",
+                "COMMUNICATE"
             ]
         },
         "annotations": null
@@ -1349,6 +1434,10 @@
                 "Agent updates reservation OBUT9V return flights to HAT290 and HAT175 on May 27.",
                 "Agent assigns payment to gift_card_6276644.",
                 "Agent updates reservation OBUT9V to 2 free baggages."
+            ],
+            "reward_basis": [
+                "DB",
+                "COMMUNICATE"
             ]
         },
         "annotations": null
@@ -1425,6 +1514,10 @@
                 "Agent updates reservation FQ8APE to economy with payment method gift_card_8190333.",
                 "Agent updates reservation FQ8APE passenger to Omar Rossi.",
                 "Agent updates reservation FQ8APE baggages to 3 free baggages."
+            ],
+            "reward_basis": [
+                "DB",
+                "COMMUNICATE"
             ]
         },
         "annotations": null
@@ -1618,6 +1711,10 @@
                 "Agent books a similar reservation for Aarav Sanchez with $250 payment on certificate_9984806 and $621 payment on credit_card_2198526.",
                 "Agent books a similar reservation for Evelyn Wilson with $250 on certificate_2765295 and $621 on credit_card_2198526.",
                 "Agent communicates that Mastercard will be charged $1286."
+            ],
+            "reward_basis": [
+                "DB",
+                "COMMUNICATE"
             ]
         },
         "annotations": null
@@ -1690,6 +1787,10 @@
                 "Agent does not cancel reservation H9ZU1C because it doesn't meet criteria set by policy.",
                 "Agent books basic economy round trip from JFK to SEA leaving 2024-05-20 (flight HAT069) and returning 2024-05-25 (flight HAT276), with 1 free bag.",
                 "Agent charges $67 to gift_card_7773485 and $39 to gift_card_7359776."
+            ],
+            "reward_basis": [
+                "DB",
+                "COMMUNICATE"
             ]
         },
         "annotations": null
@@ -1761,6 +1862,10 @@
             "nl_assertions": [
                 "Agent books one way economy flight from DTW to SEA on 2024-05-17 with flights HAT097 and HAT251 for passenger Ivan Smith, no baggage, no insurance.",
                 "Agent charges $128 to gift_card_8516878 and $247 to credit_card_3563913."
+            ],
+            "reward_basis": [
+                "DB",
+                "COMMUNICATE"
             ]
         },
         "annotations": null
@@ -1788,6 +1893,10 @@
             "communicate_info": [],
             "nl_assertions": [
                 "Agent does not offer the refund because reservation doesn't meet policy criteria."
+            ],
+            "reward_basis": [
+                "DB",
+                "COMMUNICATE"
             ]
         },
         "annotations": null
@@ -1835,6 +1944,10 @@
                 "Agent confirms that flight HAT039 from ATL to SEA on 2024-05-15 has been delayed.",
                 "Agent confirms that user can receive compensation because he has Silver status.",
                 "Agent issues a $150 certificate to the user."
+            ],
+            "reward_basis": [
+                "DB",
+                "COMMUNICATE"
             ]
         },
         "annotations": null
@@ -1863,6 +1976,10 @@
             "nl_assertions": [
                 "Agent does not cancel flight.",
                 "Agent does not offer any refund."
+            ],
+            "reward_basis": [
+                "DB",
+                "COMMUNICATE"
             ]
         },
         "annotations": null
@@ -1931,6 +2048,10 @@
             "nl_assertions": [
                 "Agent updates reservation VA5SGQ to flights HAT169 and HAT033.",
                 "Agent updates reservation VA5SGQ to 1 free baggage."
+            ],
+            "reward_basis": [
+                "DB",
+                "COMMUNICATE"
             ]
         },
         "annotations": null
@@ -1998,6 +2119,10 @@
             "nl_assertions": [
                 "Agent updates reservation to flights HAT266 and HAT112.",
                 "Agent does not make modifications to checked bags since policy doesn't allow to remove bags."
+            ],
+            "reward_basis": [
+                "DB",
+                "COMMUNICATE"
             ]
         },
         "annotations": null
@@ -2025,6 +2150,10 @@
             "communicate_info": [],
             "nl_assertions": [
                 "Agent doesn't book any flight."
+            ],
+            "reward_basis": [
+                "DB",
+                "COMMUNICATE"
             ]
         },
         "annotations": null
@@ -2116,6 +2245,10 @@
             "nl_assertions": [
                 "Agent update reservation OWZ4XL to economy.",
                 "Agent updates reservation OWZ4XL to flight HAT041."
+            ],
+            "reward_basis": [
+                "DB",
+                "COMMUNICATE"
             ]
         },
         "annotations": null
@@ -2205,6 +2338,10 @@
                 "Agent updates reservation HXDUBJ to flights HAT072 on 2024-05-19 and HAT278 on 2024-05-23.",
                 "Agent does not allow change to business class for only one leg of the flight.",
                 "Agent add 2 non-free baggages to reservation HXDUBJ."
+            ],
+            "reward_basis": [
+                "DB",
+                "COMMUNICATE"
             ]
         },
         "annotations": null
@@ -2232,6 +2369,10 @@
             "communicate_info": [],
             "nl_assertions": [
                 "Agent should not make any changes."
+            ],
+            "reward_basis": [
+                "DB",
+                "COMMUNICATE"
             ]
         },
         "annotations": null
@@ -2300,6 +2441,10 @@
                 "Agent does not cancel the reservation since this is not allowed.",
                 "Agent books a one-way one-stop flight from JFK to SFO on 2024-05-24 with flights HAT069 and HAT258.",
                 "Agent charges $290 to credit card credit_card_907483"
+            ],
+            "reward_basis": [
+                "DB",
+                "COMMUNICATE"
             ]
         },
         "annotations": null
@@ -2336,6 +2481,10 @@
             "communicate_info": [],
             "nl_assertions": [
                 "Agent does not change the flight."
+            ],
+            "reward_basis": [
+                "DB",
+                "COMMUNICATE"
             ]
         },
         "annotations": null
@@ -2422,6 +2571,10 @@
                 "Agent cancels reservation NQNU5R since it's business.",
                 "Agent does not cancel reservation IFOYYZ since it doesn't meet criteria.",
                 "Agent upgrades M20IZO to business class."
+            ],
+            "reward_basis": [
+                "DB",
+                "COMMUNICATE"
             ]
         },
         "annotations": null
@@ -2478,6 +2631,10 @@
                 "Agent verifies that the flight was delayed.",
                 "Agent verifies the number of passengers in the reservation.",
                 "Agent offers a $50 certificate."
+            ],
+            "reward_basis": [
+                "DB",
+                "COMMUNICATE"
             ]
         },
         "annotations": null
@@ -2597,6 +2754,10 @@
                 "Agent cancels reservation LU15PA.",
                 "Agent cancels reservation MSJ4OA.",
                 "Agent does not cancel  any other reservation."
+            ],
+            "reward_basis": [
+                "DB",
+                "COMMUNICATE"
             ]
         },
         "annotations": null
@@ -2653,6 +2814,10 @@
             "communicate_info": [],
             "nl_assertions": [
                 "Agent updates reservation 3RK2T9 to passenger Mei Garcia."
+            ],
+            "reward_basis": [
+                "DB",
+                "COMMUNICATE"
             ]
         },
         "annotations": null
@@ -2746,6 +2911,10 @@
             "nl_assertions": [
                 "Agent checks all reservations.",
                 "Agent does not cancel any reservation."
+            ],
+            "reward_basis": [
+                "DB",
+                "COMMUNICATE"
             ]
         },
         "annotations": null
@@ -2855,6 +3024,10 @@
             "nl_assertions": [
                 "Agent cancels reservation FDZ0T5",
                 "Agent cancels reservation HSR97W"
+            ],
+            "reward_basis": [
+                "DB",
+                "COMMUNICATE"
             ]
         },
         "annotations": null
@@ -2932,6 +3105,10 @@
             "nl_assertions": [
                 "Agent should not cancel reservation 9HBUV8 since it does not meet requirements.",
                 "Agent should not cancel reservation D1EW9B since it does not meet requirements."
+            ],
+            "reward_basis": [
+                "DB",
+                "COMMUNICATE"
             ]
         },
         "annotations": null
@@ -3176,6 +3353,10 @@
                 "Agent upgrades NM1VX1 to business.",
                 "Agent upgrades H8Q05L to business.",
                 "Agent updates KC18K6 to business."
+            ],
+            "reward_basis": [
+                "DB",
+                "COMMUNICATE"
             ]
         },
         "annotations": null
@@ -3213,6 +3394,10 @@
             "nl_assertions": [
                 "Agent should not cancel reservation PEP4E0.",
                 "Agent should not change PEP4E0 flight."
+            ],
+            "reward_basis": [
+                "DB",
+                "COMMUNICATE"
             ]
         },
         "annotations": null
@@ -3240,6 +3425,10 @@
             "communicate_info": [],
             "nl_assertions": [
                 "Agent does not cancel insurance or offer a refund."
+            ],
+            "reward_basis": [
+                "DB",
+                "COMMUNICATE"
             ]
         },
         "annotations": null
@@ -3276,6 +3465,10 @@
             "communicate_info": [],
             "nl_assertions": [
                 "Agent does not cancel H8Q05L."
+            ],
+            "reward_basis": [
+                "DB",
+                "COMMUNICATE"
             ]
         },
         "annotations": null
@@ -3312,6 +3505,10 @@
             "communicate_info": [],
             "nl_assertions": [
                 "Agent does not cancel 3RK2T9."
+            ],
+            "reward_basis": [
+                "DB",
+                "COMMUNICATE"
             ]
         },
         "annotations": null
@@ -3348,6 +3545,10 @@
             "communicate_info": [],
             "nl_assertions": [
                 "Agent does not cancel 3RK2T9."
+            ],
+            "reward_basis": [
+                "DB",
+                "COMMUNICATE"
             ]
         },
         "annotations": null

@@ -1,0 +1,11 @@
+{
+  "id": "note_05273576",
+  "note": "agent doesnt mention the prices because it doesnt register the user asking, and orders the incorrect garden hose",
+  "author_email": "soham@sierra.ai",
+  "created_at": "2026-01-26T16:11:52.198607",
+  "simulation_id": "1bb43126-ea5e-4299-aafe-d6ac357f3ef4",
+  "task_id": "29",
+  "trial": 0,
+  "source_results_file": "retail_control_openai",
+  "simulation_file": "task_29_note_05273576_simulation.json"
+}

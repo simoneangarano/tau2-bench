@@ -1,0 +1,13 @@
+{
+  "id": "note_7c561331",
+  "note": "Authentication error: agent unable to correctly collect user's first and last name due to transcription issues.",
+  "author_email": "soham@sierra.ai",
+  "created_at": "2026-01-27T13:55:42.828456",
+  "simulation_id": "b65cc8e3-d175-4e0b-a561-46af1d8df8c6",
+  "task_id": "46",
+  "trial": 0,
+  "source_results_file": "retail_regular_xai",
+  "simulation_file": "task_46_note_7c561331_simulation.json",
+  "error_source": "agent",
+  "error_type": "transcription"
+}

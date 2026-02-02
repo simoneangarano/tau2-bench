@@ -1,0 +1,13 @@
+{
+  "id": "note_412a5680",
+  "note": "Agent gets name wrong even after user spells it out. Transcription error.",
+  "author_email": "soham@sierra.ai",
+  "created_at": "2026-01-27T13:45:21.525714",
+  "simulation_id": "fa5e84c5-22ca-4fb6-91f6-9f472c497343",
+  "task_id": "44",
+  "trial": 0,
+  "source_results_file": "retail_regular_gemini",
+  "simulation_file": "task_44_note_412a5680_simulation.json",
+  "error_source": "agent",
+  "error_type": "transcription"
+}

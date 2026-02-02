@@ -1,0 +1,13 @@
+{
+  "id": "note_1c824748",
+  "note": "Agent includes spaces in name in tool call.",
+  "author_email": "soham@sierra.ai",
+  "created_at": "2026-01-27T14:53:01.547938",
+  "simulation_id": "bdebaa93-da17-4613-81cf-df29fbea2027",
+  "task_id": "53",
+  "trial": 0,
+  "source_results_file": "retail_regular_openai",
+  "simulation_file": "task_53_note_1c824748_simulation.json",
+  "error_source": "agent",
+  "error_type": "logical"
+}

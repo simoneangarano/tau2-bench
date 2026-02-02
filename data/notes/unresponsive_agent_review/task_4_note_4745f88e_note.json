@@ -1,0 +1,11 @@
+{
+  "id": "note_4745f88e",
+  "note": "xai stops responding when user spells out zip code",
+  "author_email": null,
+  "created_at": "2026-01-27T15:13:13.549633",
+  "simulation_id": "6572fa06-fecc-44ae-b782-90c0fec5078a",
+  "task_id": "4",
+  "trial": 0,
+  "source_results_file": "/Users/victorbarres/code/tau2-bench-private/data/exp/tau-voice-experiments/experiment_2025_01_22_v4_regular/retail_regular_xai/results.json",
+  "simulation_file": "task_4_note_4745f88e_simulation.json"
+}

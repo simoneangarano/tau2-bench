@@ -1,0 +1,13 @@
+{
+  "id": "note_45a7ab36",
+  "note": "Instead of modifying pending air purifier order, agent returns espresso machine without confirmation.",
+  "author_email": "soham@sierra.ai",
+  "created_at": "2026-01-27T15:01:13.805500",
+  "simulation_id": "91918bce-2425-4a05-9425-629453c24b3e",
+  "task_id": "56",
+  "trial": 0,
+  "source_results_file": "retail_regular_openai",
+  "simulation_file": "task_56_note_45a7ab36_simulation.json",
+  "error_source": "agent",
+  "error_type": "logical"
+}

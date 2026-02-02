@@ -1,0 +1,13 @@
+{
+  "id": "note_7d21dafd",
+  "note": "Agent error. Logical: Agent initially recognizes 3 pending orders, then incorrectly states there are only 2.",
+  "author_email": "keshav@sierra.ai",
+  "created_at": "2026-01-27T11:17:21.818831",
+  "simulation_id": "5b63e425-351c-476c-9fd8-cce7c1ff6f7d",
+  "task_id": "87",
+  "trial": 0,
+  "source_results_file": "tmp/qa_results/oai_retailctrl_rerun/retail_control_openai/results.json",
+  "simulation_file": "task_87_note_7d21dafd_simulation.json",
+  "error_source": "agent",
+  "error_type": "logical"
+}

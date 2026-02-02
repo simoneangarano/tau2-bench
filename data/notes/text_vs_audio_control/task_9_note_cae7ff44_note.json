@@ -1,0 +1,13 @@
+{
+  "id": "note_cae7ff44",
+  "note": "VAD error: user confirms multiple times but agent misses confirmations and keeps asking. User hangs up after third attempt. Classified as agent VAD error.",
+  "author_email": "soham@sierra.ai",
+  "created_at": "2026-01-26T15:55:35.002315",
+  "simulation_id": "f61e6c15-1ccd-412a-95b9-e4cc20db2520",
+  "task_id": "9",
+  "trial": 0,
+  "source_results_file": "retail_control_xai",
+  "simulation_file": "task_9_note_cae7ff44_simulation.json",
+  "error_source": "agent",
+  "error_type": "vad"
+}

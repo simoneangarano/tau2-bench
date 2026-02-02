@@ -8,7 +8,7 @@ from gymnasium.envs.registration import register
 from loguru import logger
 from pydantic import BaseModel
 
-from tau2.agent.base import LocalAgent, ValidAgentInputMessage
+from tau2.agent.base_agent import HalfDuplexAgent, ValidAgentInputMessage
 from tau2.agent.llm_agent import LLMAgent
 from tau2.config import (
     DEFAULT_LLM_AGENT,
@@ -29,8 +29,14 @@ from tau2.environment.tool import Tool, as_tool
 from tau2.evaluator.evaluator import EvaluationType, evaluate_simulation
 from tau2.orchestrator.orchestrator import Orchestrator
 from tau2.registry import registry
-from tau2.user.base import OUT_OF_SCOPE, STOP, TRANSFER, BaseUser, ValidUserInputMessage
 from tau2.user.user_simulator import DummyUser, UserSimulator
+from tau2.user.user_simulator_base import (
+    OUT_OF_SCOPE,
+    STOP,
+    TRANSFER,
+    HalfDuplexUser,
+    ValidUserInputMessage,
+)
 from tau2.utils.tools import parse_action_string, to_functional_format
 
 TAU_BENCH_ENV_NAME = "tau-bench"
@@ -94,7 +100,7 @@ def done() -> str:
     return GymAgent.STOP_TOKEN
 
 
-class GymAgent(LocalAgent):
+class GymAgent(HalfDuplexAgent):
     """
     A gym-style agent that provides a step-based interface for task execution.
 
@@ -327,7 +333,7 @@ class GymUserState(BaseModel):
     messages: list[APICompatibleMessage]
 
 
-class GymUser(BaseUser):
+class GymUser(HalfDuplexUser):
     """
     A gym-style user that provides a step-based interface for user actions.
 
@@ -354,7 +360,7 @@ class GymUser(BaseUser):
             tools: List of tools available to the user (optional)
             instructions: Instructions for the user scenario (optional)
         """
-        super().__init__(instructions=instructions, llm=None, llm_args=None)
+        super().__init__(instructions=instructions, tools=tools)
         self.tools = tools
         self._observation: Optional[list[Message]] = None
         self._next_action: Optional[UserMessage] = None

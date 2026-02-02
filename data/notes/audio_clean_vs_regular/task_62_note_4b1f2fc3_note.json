@@ -1,0 +1,13 @@
+{
+  "id": "note_4b1f2fc3",
+  "note": "User error: user gets interrupted and forgets to ask about speaker battery life.",
+  "author_email": "soham@sierra.ai",
+  "created_at": "2026-01-27T13:57:58.257125",
+  "simulation_id": "eece3893-0c9c-424a-9449-05951e0198af",
+  "task_id": "62",
+  "trial": 0,
+  "source_results_file": "retail_regular_xai",
+  "simulation_file": "task_62_note_4b1f2fc3_simulation.json",
+  "error_source": "user",
+  "error_type": "logical"
+}

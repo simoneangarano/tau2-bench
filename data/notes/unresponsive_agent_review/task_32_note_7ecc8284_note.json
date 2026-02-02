@@ -1,0 +1,11 @@
+{
+  "id": "note_7ecc8284",
+  "note": "agent stops responding at the end when user answers yes",
+  "author_email": null,
+  "created_at": "2026-01-27T15:22:54.922152",
+  "simulation_id": "d97f06ce-af0b-48ae-ad43-672bd1aee1af",
+  "task_id": "32",
+  "trial": 0,
+  "source_results_file": "/Users/victorbarres/code/tau2-bench-private/data/exp/tau-voice-experiments/experiment_2025_01_22_v4_regular/retail_regular_xai/results.json",
+  "simulation_file": "task_32_note_7ecc8284_simulation.json"
+}

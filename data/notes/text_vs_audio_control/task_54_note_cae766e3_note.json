@@ -1,0 +1,13 @@
+{
+  "id": "note_cae766e3",
+  "note": "User error. User says \"cancel everything\" which is ambiguous (pending orders only, or also return delivered orders?). Agent reasonably interprets as pending orders only. User accepts and ends call.",
+  "author_email": "keshav@sierra.ai",
+  "created_at": "2026-01-27T10:41:15.928114",
+  "simulation_id": "eb7cc4f2-6b4d-48a8-bd0d-917038593411",
+  "task_id": "54",
+  "trial": 0,
+  "source_results_file": "tmp/qa_results/oai_retailctrl_rerun/retail_control_openai/results.json",
+  "simulation_file": "task_54_note_cae766e3_simulation.json",
+  "error_source": "user",
+  "error_type": "early_termination"
+}

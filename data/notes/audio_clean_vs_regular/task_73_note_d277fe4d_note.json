@@ -1,0 +1,13 @@
+{
+  "id": "note_d277fe4d",
+  "note": "Could also be transcription error: agent is silent, then responds \"yes that's correct\" to user asking for update. User interprets this as return being complete and hangs up, but agent hadn't started processing return.",
+  "author_email": "soham@sierra.ai",
+  "created_at": "2026-01-27T13:48:54.922943",
+  "simulation_id": "8bb9ec98-265a-41d9-9e67-c1bb8dfbd9da",
+  "task_id": "73",
+  "trial": 0,
+  "source_results_file": "retail_regular_gemini",
+  "simulation_file": "task_73_note_d277fe4d_simulation.json",
+  "error_source": "agent",
+  "error_type": "vad"
+}

@@ -1,0 +1,13 @@
+{
+  "id": "note_2b920733",
+  "note": "Agent error. Tool call schema error: provided string item_id instead of list of item IDs.",
+  "author_email": "keshav@sierra.ai",
+  "created_at": "2026-01-27T12:47:08.872435",
+  "simulation_id": "a4c69226-039e-4801-a1cb-b7f55b4e542c",
+  "task_id": "14",
+  "trial": 0,
+  "source_results_file": "tmp/qa_results/victor/experiment_2025_01_22_v4_regular/retail_regular_gemini/results.json",
+  "simulation_file": "task_14_note_2b920733_simulation.json",
+  "error_source": "agent",
+  "error_type": "logical"
+}

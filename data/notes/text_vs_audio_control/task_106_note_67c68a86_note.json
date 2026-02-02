@@ -1,0 +1,13 @@
+{
+  "id": "note_67c68a86",
+  "note": "Logical error: agent does not ask user to spell their name (per instructions), leading to incorrect tool calls.",
+  "author_email": "soham@sierra.ai",
+  "created_at": "2026-01-26T16:28:11.177881",
+  "simulation_id": "42473b97-ce7c-4a38-97ff-fe6554e267ff",
+  "task_id": "106",
+  "trial": 0,
+  "source_results_file": "retail_control_gemini",
+  "simulation_file": "task_106_note_67c68a86_simulation.json",
+  "error_source": "agent",
+  "error_type": "logical"
+}

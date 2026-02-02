@@ -1,13 +1,24 @@
 from copy import deepcopy
 from enum import Enum
 from pathlib import Path
-from typing import Optional
+from typing import Literal, Optional
 
 import pandas as pd
 from pydantic import BaseModel, Field
 from typing_extensions import Annotated
 
 from tau2.config import (
+    DEFAULT_AUDIO_NATIVE_AGENT_IMPLEMENTATION,
+    DEFAULT_AUDIO_NATIVE_MODELS,
+    DEFAULT_AUDIO_NATIVE_PROVIDER,
+    DEFAULT_AUDIO_NATIVE_USER_IMPLEMENTATION,
+    DEFAULT_BACKCHANNEL_MAX_THRESHOLD_SECONDS,
+    DEFAULT_BACKCHANNEL_MIN_THRESHOLD_SECONDS,
+    DEFAULT_BACKCHANNEL_POISSON_RATE,
+    DEFAULT_BUFFER_UNTIL_COMPLETE,
+    DEFAULT_FAST_FORWARD_MODE,
+    DEFAULT_INTEGRATION_DURATION_SECONDS,
+    DEFAULT_INTERRUPTION_CHECK_INTERVAL_SECONDS,
     DEFAULT_LLM_AGENT,
     DEFAULT_LLM_ARGS_AGENT,
     DEFAULT_LLM_ARGS_USER,
@@ -16,14 +27,214 @@ from tau2.config import (
     DEFAULT_MAX_CONCURRENCY,
     DEFAULT_MAX_ERRORS,
     DEFAULT_MAX_STEPS,
+    DEFAULT_MAX_STEPS_SECONDS,
     DEFAULT_NUM_TRIALS,
+    DEFAULT_PCM_SAMPLE_RATE,
+    DEFAULT_RETRY_ATTEMPTS,
+    DEFAULT_RETRY_MIN_WAIT,
     DEFAULT_SAVE_TO,
     DEFAULT_SEED,
+    DEFAULT_SEND_AUDIO_INSTANT,
+    DEFAULT_SILENCE_ANNOTATION_THRESHOLD_SECONDS,
+    DEFAULT_TELEPHONY_RATE,
+    DEFAULT_TEXT_STREAMING_CONFIG,
+    DEFAULT_TICK_DURATION_SECONDS,
+    DEFAULT_USE_LLM_BACKCHANNEL,
+    DEFAULT_WAIT_TO_RESPOND_THRESHOLD_OTHER_SECONDS,
+    DEFAULT_WAIT_TO_RESPOND_THRESHOLD_SELF_SECONDS,
+    DEFAULT_YIELD_THRESHOLD_WHEN_INTERRUPTED_SECONDS,
+    DEFAULT_YIELD_THRESHOLD_WHEN_INTERRUPTING_SECONDS,
 )
-from tau2.data_model.message import Message
+from tau2.data_model.message import Message, Tick
+from tau2.data_model.persona import PersonaConfig
 from tau2.data_model.tasks import Action, EnvAssertion, RewardType, Task
+from tau2.data_model.voice import SpeechComplexity, SpeechEnvironment, VoiceSettings
 from tau2.environment.environment import EnvironmentInfo
+from tau2.environment.toolkit import ToolType
+from tau2.orchestrator.modes import CommunicationMode
 from tau2.utils.utils import get_now
+
+
+class AudioNativeConfig(BaseModel):
+    """Configuration for audio-native mode using DiscreteTimeAudioNativeAgent.
+
+    This configuration is used when running full-duplex voice simulations
+    with audio native APIs (OpenAI Realtime or Gemini Live).
+    """
+
+    # Provider selection
+    provider: Literal["openai", "gemini", "xai", "nova", "qwen", "deepgram"] = Field(
+        default=DEFAULT_AUDIO_NATIVE_PROVIDER,
+        description="Audio native API provider: 'openai' (OpenAI Realtime), 'gemini' (Gemini Live), 'xai' (xAI Grok Voice Agent), 'nova' (Amazon Nova Sonic), 'qwen' (Alibaba Qwen Omni), or 'deepgram' (Deepgram Voice Agent)",
+    )
+
+    model: str = Field(
+        default=DEFAULT_AUDIO_NATIVE_MODELS[DEFAULT_AUDIO_NATIVE_PROVIDER],
+        description="Audio native model to use",
+    )
+
+    # Timing configuration
+    tick_duration_seconds: float = Field(
+        default=DEFAULT_TICK_DURATION_SECONDS,
+        description="Duration of each tick in seconds (e.g., 0.2 = 200ms)",
+    )
+    max_steps_seconds: int = Field(
+        default=DEFAULT_MAX_STEPS_SECONDS,
+        description="Maximum conversation duration in seconds",
+    )
+
+    # Audio configuration
+    pcm_sample_rate: int = Field(
+        default=DEFAULT_PCM_SAMPLE_RATE,
+        description="User simulator PCM synthesis sample rate",
+    )
+    telephony_rate: int = Field(
+        default=DEFAULT_TELEPHONY_RATE,
+        description="API/agent telephony sample rate (OpenAI Realtime API)",
+    )
+
+    # User simulator turn-taking thresholds (in seconds)
+    wait_to_respond_threshold_other_seconds: float = Field(
+        default=DEFAULT_WAIT_TO_RESPOND_THRESHOLD_OTHER_SECONDS,
+        description="Min time to wait since OTHER (agent) last spoke before responding",
+    )
+    wait_to_respond_threshold_self_seconds: float = Field(
+        default=DEFAULT_WAIT_TO_RESPOND_THRESHOLD_SELF_SECONDS,
+        description="Min time to wait since SELF (user) last spoke before responding",
+    )
+    yield_threshold_when_interrupted_seconds: float = Field(
+        default=DEFAULT_YIELD_THRESHOLD_WHEN_INTERRUPTED_SECONDS,
+        description="How long user keeps speaking when agent interrupts user",
+    )
+    yield_threshold_when_interrupting_seconds: float = Field(
+        default=DEFAULT_YIELD_THRESHOLD_WHEN_INTERRUPTING_SECONDS,
+        description="How long user keeps speaking when user interrupts agent",
+    )
+    interruption_check_interval_seconds: float = Field(
+        default=DEFAULT_INTERRUPTION_CHECK_INTERVAL_SECONDS,
+        description="Interval for checking interruptions",
+    )
+    integration_duration_seconds: float = Field(
+        default=DEFAULT_INTEGRATION_DURATION_SECONDS,
+        description="Integration duration for linearization",
+    )
+    silence_annotation_threshold_seconds: float = Field(
+        default=DEFAULT_SILENCE_ANNOTATION_THRESHOLD_SECONDS,
+        description="Silence threshold for adding annotations to conversation history",
+    )
+    backchannel_min_threshold_seconds: Optional[float] = Field(
+        default=DEFAULT_BACKCHANNEL_MIN_THRESHOLD_SECONDS,
+        description="Backchannel min threshold in seconds (None = disabled). Used with Poisson policy.",
+    )
+    backchannel_max_threshold_seconds: Optional[float] = Field(
+        default=DEFAULT_BACKCHANNEL_MAX_THRESHOLD_SECONDS,
+        description="Backchannel max threshold in seconds - force backchannel after this duration. Used with Poisson policy.",
+    )
+    backchannel_poisson_rate: float = Field(
+        default=DEFAULT_BACKCHANNEL_POISSON_RATE,
+        description="Backchannel Poisson rate (events per second). Used with Poisson policy.",
+    )
+    use_llm_backchannel: bool = Field(
+        default=DEFAULT_USE_LLM_BACKCHANNEL,
+        description="If True, use LLM-based backchannel policy. If False, use Poisson-based policy with min/max thresholds.",
+    )
+
+    # Agent behavior
+    buffer_until_complete: bool = Field(
+        default=DEFAULT_BUFFER_UNTIL_COMPLETE,
+        description="Buffer audio until complete utterance",
+    )
+    fast_forward_mode: bool = Field(
+        default=DEFAULT_FAST_FORWARD_MODE,
+        description="Skip wall-clock waiting when enough audio is buffered",
+    )
+    use_xml_prompt: bool = Field(
+        default=False,
+        description="Use XML tags in system prompt. Defaults to False (plain text) for all providers.",
+    )
+    send_audio_instant: bool = Field(
+        default=DEFAULT_SEND_AUDIO_INSTANT,
+        description="Send audio instantly (no streaming simulation)",
+    )
+
+    # Derived properties (computed from seconds and tick_duration)
+    @property
+    def tick_duration_ms(self) -> float:
+        """Tick duration in milliseconds."""
+        return self.tick_duration_seconds * 1000
+
+    @property
+    def user_chunk_size(self) -> int:
+        """User audio chunk size in samples."""
+        return int(self.pcm_sample_rate * self.tick_duration_seconds)
+
+    @property
+    def wait_to_respond_threshold_other_ticks(self) -> int:
+        """Wait to respond threshold (other) in ticks."""
+        return int(
+            self.wait_to_respond_threshold_other_seconds / self.tick_duration_seconds
+        )
+
+    @property
+    def wait_to_respond_threshold_self_ticks(self) -> int:
+        """Wait to respond threshold (self) in ticks."""
+        return int(
+            self.wait_to_respond_threshold_self_seconds / self.tick_duration_seconds
+        )
+
+    @property
+    def yield_threshold_when_interrupted_ticks(self) -> int:
+        """Yield threshold when interrupted (agent interrupts user) in ticks."""
+        return int(
+            self.yield_threshold_when_interrupted_seconds / self.tick_duration_seconds
+        )
+
+    @property
+    def yield_threshold_when_interrupting_ticks(self) -> int:
+        """Yield threshold when interrupting (user interrupts agent) in ticks."""
+        return int(
+            self.yield_threshold_when_interrupting_seconds / self.tick_duration_seconds
+        )
+
+    @property
+    def interruption_check_interval_ticks(self) -> int:
+        """Interruption check interval in ticks."""
+        return int(
+            self.interruption_check_interval_seconds / self.tick_duration_seconds
+        )
+
+    @property
+    def integration_ticks(self) -> int:
+        """Integration ticks for linearization."""
+        return max(
+            1, int(self.integration_duration_seconds / self.tick_duration_seconds)
+        )
+
+    @property
+    def silence_annotation_threshold_ticks(self) -> int:
+        """Silence annotation threshold in ticks."""
+        return int(
+            self.silence_annotation_threshold_seconds / self.tick_duration_seconds
+        )
+
+    @property
+    def backchannel_min_threshold_ticks(self) -> Optional[int]:
+        """Backchannel min threshold in ticks (None if disabled)."""
+        if self.backchannel_min_threshold_seconds is None:
+            return None
+        return int(self.backchannel_min_threshold_seconds / self.tick_duration_seconds)
+
+    @property
+    def backchannel_max_threshold_ticks(self) -> Optional[int]:
+        """Backchannel max threshold in ticks (None if not set)."""
+        if self.backchannel_max_threshold_seconds is None:
+            return None
+        return int(self.backchannel_max_threshold_seconds / self.tick_duration_seconds)
+
+    @property
+    def max_steps_ticks(self) -> int:
+        """Maximum steps in ticks."""
+        return int(self.max_steps_seconds / self.tick_duration_seconds)
 
 
 class RunConfig(BaseModel):
@@ -160,11 +371,88 @@ class RunConfig(BaseModel):
             default=DEFAULT_LOG_LEVEL,
         ),
     ]
+    agent_voice_settings: Annotated[
+        Optional[VoiceSettings],
+        Field(
+            description="Voice synthesis and transcription settings",
+            default=None,
+        ),
+    ]
+    user_voice_settings: Annotated[
+        Optional[VoiceSettings],
+        Field(
+            description="Voice synthesis and transcription settings",
+            default=None,
+        ),
+    ]
     enforce_communication_protocol: Annotated[
         bool,
         Field(
             description="Whether to enforce communication protocol rules (e.g., no mixed messages with text and tool calls)",
             default=False,
+        ),
+    ]
+    text_streaming_config: Annotated[
+        Optional[dict],
+        Field(
+            description="Text streaming configuration",
+            default=None,
+        ),
+    ]
+    speech_complexity: Annotated[
+        SpeechComplexity,
+        Field(
+            description="Speech environment complexity level: 'control' (clean speech, no effects), 'regular' (realistic with background noise and effects), plus ablation variants (control_audio, control_accents, control_behavior)",
+            default="regular",
+        ),
+    ]
+    audio_native_config: Annotated[
+        Optional[AudioNativeConfig],
+        Field(
+            description="Configuration for audio-native mode. If set, enables full-duplex voice using DiscreteTimeAudioNativeAgent and VoiceStreamingUserSimulator.",
+            default=None,
+        ),
+    ]
+    verbose_logs: Annotated[
+        bool,
+        Field(
+            description="Enable verbose logging: saves LLM call logs, audio files, per-task logs, and ticks (for audio-native).",
+            default=False,
+        ),
+    ]
+    max_retries: Annotated[
+        int,
+        Field(
+            description="Maximum number of retries for failed tasks.",
+            default=DEFAULT_RETRY_ATTEMPTS,
+        ),
+    ]
+    retry_delay: Annotated[
+        float,
+        Field(
+            description="Delay in seconds between retries.",
+            default=DEFAULT_RETRY_MIN_WAIT,
+        ),
+    ]
+    auto_resume: Annotated[
+        bool,
+        Field(
+            description="Automatically resume from existing save file without prompting.",
+            default=False,
+        ),
+    ]
+    auto_review: Annotated[
+        bool,
+        Field(
+            description="Automatically run LLM conversation review after each simulation.",
+            default=False,
+        ),
+    ]
+    review_mode: Annotated[
+        Literal["full", "user"],
+        Field(
+            description="Review mode when auto_review is enabled: 'full' (agent+user errors, default) or 'user' (user simulator only).",
+            default="full",
         ),
     ]
 
@@ -173,6 +461,57 @@ class RunConfig(BaseModel):
         Validate the run config
         """
         pass
+
+    @property
+    def is_audio_native(self) -> bool:
+        """Check if audio-native mode is enabled."""
+        return self.audio_native_config is not None
+
+    def get_effective_agent(self) -> str:
+        """Get the effective agent implementation to use."""
+        if self.is_audio_native:
+            return DEFAULT_AUDIO_NATIVE_AGENT_IMPLEMENTATION
+        return self.agent
+
+    def get_effective_user(self) -> str:
+        """Get the effective user implementation to use."""
+        if self.is_audio_native:
+            return DEFAULT_AUDIO_NATIVE_USER_IMPLEMENTATION
+        return self.user
+
+    def get_effective_max_steps(self) -> int:
+        """Get the effective max steps to use."""
+        if self.is_audio_native:
+            return self.audio_native_config.max_steps_ticks
+        return self.max_steps
+
+    def get_effective_agent_model(self) -> str:
+        """Get the effective agent model to use.
+
+        In audio-native mode, returns the model from audio_native_config.
+        Otherwise returns the llm_agent model.
+        """
+        if self.is_audio_native:
+            return self.audio_native_config.model
+        return self.llm_agent
+
+    def get_effective_agent_provider(self) -> Optional[str]:
+        """Get the agent provider (only relevant for audio-native mode).
+
+        Returns the provider (e.g., 'openai', 'gemini', 'xai') for audio-native mode,
+        or None for standard mode.
+        """
+        if self.is_audio_native:
+            return self.audio_native_config.provider
+        return None
+
+    def get_effective_user_model(self) -> str:
+        """Get the effective user model to use.
+
+        Always returns llm_user since the user simulator uses its own model
+        regardless of audio-native mode.
+        """
+        return self.llm_user
 
 
 class NLAssertionCheck(BaseModel):
@@ -212,6 +551,10 @@ class ActionCheck(BaseModel):
     action: Action
     action_match: bool
     action_reward: float
+    tool_type: Optional[ToolType] = Field(
+        description="The type of tool (read/write/think/generic).",
+        default=None,
+    )
 
 
 class EnvAssertionCheck(BaseModel):
@@ -222,6 +565,284 @@ class EnvAssertionCheck(BaseModel):
     env_assertion: EnvAssertion
     met: bool
     reward: float
+
+
+# =============================================================================
+# Review Data Models (for LLM-based conversation review)
+# =============================================================================
+
+
+class ReviewError(BaseModel):
+    """
+    Represents an error found during conversation review.
+    """
+
+    source: Literal["user", "agent", "unknown"] = Field(
+        description="Who made the error: 'user', 'agent', or 'unknown'."
+    )
+    error_type: Optional[str] = Field(
+        description="Type of error: 'content_error' or 'interruption_error'.",
+        default=None,
+    )
+    error_tags: list[str] = Field(
+        description="Tags classifying the error. Must have at least one tag.",
+        default_factory=list,
+    )
+    severity: Optional[
+        Literal["minor", "critical", "critical_helped", "critical_hindered"]
+    ] = Field(
+        description="Error severity. For user errors: 'critical_helped' (helped agent inappropriately), 'critical_hindered' (made task harder/impossible), 'minor' (no impact). For agent errors: 'critical' (caused failure or policy violation), 'minor' (suboptimal but no impact).",
+        default=None,
+    )
+    # For full-duplex conversations, use tick_start/tick_end to identify the segment
+    # For turn-based conversations, turn_idx is still used
+    turn_idx: Optional[int] = Field(
+        description="The turn index where the error occurred (turn-based only).",
+        default=None,
+    )
+    tick_start: Optional[int] = Field(
+        description="Start tick of the segment where the error occurred (full-duplex only).",
+        default=None,
+    )
+    tick_end: Optional[int] = Field(
+        description="End tick of the segment where the error occurred (full-duplex only).",
+        default=None,
+    )
+    reasoning: str = Field(
+        description="Explanation of the error or why there is no error."
+    )
+    correct_behavior: Optional[str] = Field(
+        description="What should have been done instead.",
+        default=None,
+    )
+
+
+class Review(BaseModel):
+    """
+    Result of reviewing a conversation for both user and agent errors.
+    """
+
+    summary: str = Field(
+        description="Brief summary of the conversation review.",
+        default="",
+    )
+    agent_error: bool = Field(
+        description="Whether the agent made at least one error.",
+        default=False,
+    )
+    user_error: bool = Field(
+        description="Whether the user simulator made at least one error.",
+        default=False,
+    )
+    critical_user_error: bool = Field(
+        description="Whether at least one critical user error was found (severity 'critical_helped' or 'critical_hindered').",
+        default=False,
+    )
+    has_errors: bool = Field(
+        description="Whether any errors were found in the conversation."
+    )
+    errors: list[ReviewError] = Field(
+        description="List of errors found in the conversation.",
+        default_factory=list,
+    )
+    cost: Optional[float] = Field(
+        description="The cost of the review.",
+        default=None,
+    )
+
+
+class UserOnlyReviewError(BaseModel):
+    """
+    Represents an error made by the user simulator during a conversation.
+    """
+
+    # For full-duplex conversations, use tick_start/tick_end to identify the segment
+    # For turn-based conversations, turn_idx is still used
+    turn_idx: Optional[int] = Field(
+        description="The turn index where the error occurred (turn-based only).",
+        default=None,
+    )
+    tick_start: Optional[int] = Field(
+        description="Start tick of the segment where the error occurred (full-duplex only).",
+        default=None,
+    )
+    tick_end: Optional[int] = Field(
+        description="End tick of the segment where the error occurred (full-duplex only).",
+        default=None,
+    )
+    error_type: str = Field(
+        description="Type of error: 'content_error' or 'interruption_error'.",
+        default="content_error",
+    )
+    error_tags: list[str] = Field(
+        description="Tags classifying the error. Must have at least one tag.",
+        default_factory=list,
+    )
+    severity: Optional[Literal["minor", "critical"]] = Field(
+        description="Severity of user error: 'critical' if it influenced the outcome, 'minor' otherwise.",
+        default=None,
+    )
+    reasoning: str = Field(description="Explanation of why this is an error.")
+    user_message: Optional[str] = Field(
+        description="The problematic user message content.",
+        default=None,
+    )
+    correct_behavior: Optional[str] = Field(
+        description="What the user should have said or done instead.",
+        default=None,
+    )
+
+
+class UserOnlyReview(BaseModel):
+    """
+    Result of reviewing a user simulator's behavior in a conversation.
+    """
+
+    summary: str = Field(
+        description="Brief summary of the conversation review.",
+        default="",
+    )
+    user_error: bool = Field(
+        description="Whether the user simulator made at least one error.",
+        default=False,
+    )
+    critical_user_error: bool = Field(
+        description="Whether at least one critical user error was found (severity 'critical_helped' or 'critical_hindered').",
+        default=False,
+    )
+    has_errors: bool = Field(description="Whether the user simulator made any errors.")
+    errors: list[UserOnlyReviewError] = Field(
+        description="List of errors made by the user simulator.",
+        default_factory=list,
+    )
+    cost: Optional[float] = Field(
+        description="The cost of the review.",
+        default=None,
+    )
+
+
+class AuthenticationClassification(BaseModel):
+    """
+    Classification of user authentication outcome in a conversation.
+    """
+
+    status: Literal["succeeded", "failed", "not_needed"] = Field(
+        description="Authentication status: 'succeeded', 'failed', or 'not_needed'."
+    )
+    reasoning: str = Field(
+        description="Brief explanation of why this classification was chosen.",
+        default="",
+    )
+    cost: Optional[float] = Field(
+        description="The cost of the classification.",
+        default=None,
+    )
+
+
+class ErrorSource(str, Enum):
+    """Source of the error in a simulation."""
+
+    AGENT = "agent"
+    USER = "user"
+    SYSTEM = "system"  # Orchestrator, framework, or infrastructure error
+
+
+class ErrorType(str, Enum):
+    """Type of error in a simulation."""
+
+    TRANSCRIPTION = "transcription"  # ASR/speech-to-text errors
+    VAD = "vad"  # Voice activity detection / turn-taking issues
+    LOGICAL = "logical"  # Reasoning, tool call, or instruction following errors
+    HALLUCINATION = "hallucination"  # Made up information
+    UNRESPONSIVE = "unresponsive"  # Agent disappeared / no response / latency
+    EARLY_TERMINATION = "early_termination"  # Ended conversation prematurely
+
+
+class SimulationNote(BaseModel):
+    """
+    A note about a simulation run.
+    Used to record observations, comments, or annotations about specific simulation runs.
+    Unlike TaskIssue, this does NOT modify the task definition.
+    """
+
+    id: str = Field(description="Unique identifier for the note.")
+    note: Annotated[
+        str,
+        Field(description="The note/observation about the simulation."),
+    ]
+    author_email: Annotated[
+        Optional[str],
+        Field(
+            description="Email of the person who created this note.",
+            default=None,
+        ),
+    ]
+    created_at: Annotated[
+        Optional[str],
+        Field(
+            description="ISO datetime when the note was created.",
+            default=None,
+        ),
+    ]
+    # Simulation metadata
+    simulation_id: Annotated[
+        str,
+        Field(description="ID of the simulation this note is about."),
+    ]
+    task_id: Annotated[
+        str,
+        Field(description="ID of the task for this simulation."),
+    ]
+    trial: Annotated[
+        int,
+        Field(description="Trial number of the simulation."),
+    ]
+    # Source location
+    source_results_file: Annotated[
+        Optional[str],
+        Field(
+            description="Path to the original results file where the simulation was found.",
+            default=None,
+        ),
+    ]
+    simulation_file: Annotated[
+        Optional[str],
+        Field(
+            description="Path to the simulation JSON file associated with this note.",
+            default=None,
+        ),
+    ]
+    # Qualitative analysis fields
+    error_source: Annotated[
+        Optional[ErrorSource],
+        Field(
+            description="Source of the error: agent, user, or system (framework/orchestrator).",
+            default=None,
+        ),
+    ]
+    error_type: Annotated[
+        Optional[ErrorType],
+        Field(
+            description="Type of error: transcription, vad, logical, hallucination, unresponsive, or early_termination.",
+            default=None,
+        ),
+    ]
+
+    def __str__(self) -> str:
+        lines = []
+        lines.append(
+            f"📝 [{self.id}] {self.note[:50]}{'...' if len(self.note) > 50 else ''}"
+        )
+        lines.append(
+            f"  Simulation: {self.simulation_id} (Task: {self.task_id}, Trial: {self.trial})"
+        )
+        if self.source_results_file:
+            lines.append(f"  Source: {self.source_results_file}")
+        if self.author_email:
+            lines.append(f"  Author: {self.author_email}")
+        if self.created_at:
+            lines.append(f"  Created: {self.created_at}")
+        return "\n".join(lines)
 
 
 class RewardInfo(BaseModel):
@@ -271,6 +892,65 @@ class RewardInfo(BaseModel):
         Field(description="Additional information about the reward.", default=None),
     ]
 
+    @property
+    def partial_action_reward(self) -> Optional[dict]:
+        """
+        Get the partial reward breakdown for actions.
+
+        Returns a dict with:
+        - total: (correct, count, proportion)
+        - read: (correct, count, proportion) or None if no read actions
+        - write: (correct, count, proportion) or None if no write actions
+
+        Returns None if there are no action_checks.
+        """
+        if not self.action_checks:
+            return None
+
+        total_correct = sum(1 for ac in self.action_checks if ac.action_match)
+        total_count = len(self.action_checks)
+        total_proportion = total_correct / total_count if total_count > 0 else 0.0
+
+        # Filter by tool type
+        read_checks = [ac for ac in self.action_checks if ac.tool_type == ToolType.READ]
+        write_checks = [
+            ac for ac in self.action_checks if ac.tool_type == ToolType.WRITE
+        ]
+
+        read_correct = sum(1 for ac in read_checks if ac.action_match)
+        read_count = len(read_checks)
+        read_proportion = read_correct / read_count if read_count > 0 else None
+
+        write_correct = sum(1 for ac in write_checks if ac.action_match)
+        write_count = len(write_checks)
+        write_proportion = write_correct / write_count if write_count > 0 else None
+
+        return {
+            "total": {
+                "correct": total_correct,
+                "count": total_count,
+                "proportion": total_proportion,
+            },
+            "read": (
+                {
+                    "correct": read_correct,
+                    "count": read_count,
+                    "proportion": read_proportion,
+                }
+                if read_count > 0
+                else None
+            ),
+            "write": (
+                {
+                    "correct": write_correct,
+                    "count": write_count,
+                    "proportion": write_proportion,
+                }
+                if write_count > 0
+                else None
+            ),
+        }
+
 
 class AgentInfo(BaseModel):
     """
@@ -281,6 +961,10 @@ class AgentInfo(BaseModel):
     llm: Optional[str] = Field(description="The LLM used by the agent.", default=None)
     llm_args: Optional[dict] = Field(
         description="The arguments to pass to the LLM for the agent.", default=None
+    )
+    voice_settings: Optional[VoiceSettings] = Field(
+        description="Voice synthesis and transcription settings for the agent",
+        default=None,
     )
 
 
@@ -297,6 +981,14 @@ class UserInfo(BaseModel):
     global_simulation_guidelines: Optional[str] = Field(
         description="The global simulation guidelines for the user.", default=None
     )
+    voice_settings: Optional[VoiceSettings] = Field(
+        description="Voice synthesis and transcription settings for the user",
+        default=None,
+    )
+    persona_config: Optional[PersonaConfig] = Field(
+        description="Runtime persona configuration for the user simulator",
+        default=None,
+    )
 
 
 class Info(BaseModel):
@@ -312,6 +1004,18 @@ class Info(BaseModel):
     seed: Optional[int] = Field(
         description="The seed used for the simulation.", default=None
     )
+    text_streaming_config: Optional[dict] = Field(
+        description="Text streaming configuration",
+        default=deepcopy(DEFAULT_TEXT_STREAMING_CONFIG),
+    )
+    speech_complexity: Optional[SpeechComplexity] = Field(
+        description="Speech complexity level for audio-native mode",
+        default=None,
+    )
+    audio_native_config: Optional["AudioNativeConfig"] = Field(
+        description="Configuration for audio-native mode",
+        default=None,
+    )
 
 
 class TerminationReason(str, Enum):
@@ -321,6 +1025,7 @@ class TerminationReason(str, Enum):
     TOO_MANY_ERRORS = "too_many_errors"
     AGENT_ERROR = "agent_error"
     USER_ERROR = "user_error"
+    INFRASTRUCTURE_ERROR = "infrastructure_error"  # Task failed due to infrastructure (e.g., API disconnect)
 
 
 class SimulationRun(BaseModel):
@@ -351,9 +1056,41 @@ class SimulationRun(BaseModel):
     messages: list[Message] = Field(
         description="The messages exchanged between the user, agent and environment."
     )
+    # Note: Tick type is from tau2.orchestrator.full_duplex_orchestrator
+    # Using Any to avoid circular import
+    ticks: Optional[list[Tick]] = Field(
+        description="The ticks of the simulation. Only available in full-duplex mode.",
+        default=None,
+    )
     trial: Optional[int] = Field(description="Trial number", default=None)
     seed: Optional[int] = Field(
         description="Seed used for the simulation.", default=None
+    )
+    mode: str = Field(
+        description="The communication mode used for the simulation.",
+        default=CommunicationMode.HALF_DUPLEX.value,
+    )
+    speech_environment: Optional[SpeechEnvironment] = Field(
+        description="Speech environment used for this simulation",
+        default=None,
+    )
+    review: Optional[Review] = Field(  # TODO: Add auth_classification to review field
+        description="LLM-based review of the conversation (agent + user errors).",
+        default=None,
+    )
+    user_only_review: Optional[UserOnlyReview] = Field(
+        description="LLM-based review of user simulator behavior only.",
+        default=None,
+    )
+    info: Optional[dict] = Field(
+        description="Additional diagnostics and metrics from the simulation.",
+        default=None,
+    )
+    auth_classification: Optional[AuthenticationClassification] = (
+        Field(  # TODO: Add to review field
+            description="Classification of user authentication outcome.",
+            default=None,
+        )
     )
 
 
@@ -429,7 +1166,7 @@ class Results(BaseModel):
                 "task_id": sim.task_id,
                 "trial": sim.trial,
                 "seed": sim.seed,
-                "reward": sim.reward_info.reward,
+                "reward": sim.reward_info.reward if sim.reward_info else None,
                 "agent_cost": sim.agent_cost,
                 "user_cost": sim.user_cost,
                 "termination_reason": sim.termination_reason,

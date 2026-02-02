@@ -1,0 +1,13 @@
+{
+  "id": "note_026b3817",
+  "note": "Agent's summary of order does not match items in tool call. Judge assessment correct.",
+  "author_email": "keshav@sierra.ai",
+  "created_at": "2026-01-26T13:49:36.908738",
+  "simulation_id": "4cb42f5d-4076-438a-8225-2475c7b95672",
+  "task_id": "16",
+  "trial": 0,
+  "source_results_file": "retail_control_xai",
+  "simulation_file": "task_16_note_026b3817_simulation.json",
+  "error_source": "agent",
+  "error_type": "logical"
+}

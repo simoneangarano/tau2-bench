@@ -1,0 +1,13 @@
+{
+  "id": "note_ffe37b8f",
+  "note": "Agent became unresponsive.",
+  "author_email": "soham@sierra.ai",
+  "created_at": "2026-01-27T15:03:32.008475",
+  "simulation_id": "6535ff65-7bb7-4b21-84b7-cc8e4d7467f1",
+  "task_id": "80",
+  "trial": 0,
+  "source_results_file": "retail_regular_openai",
+  "simulation_file": "task_80_note_ffe37b8f_simulation.json",
+  "error_source": "agent",
+  "error_type": "unresponsive"
+}

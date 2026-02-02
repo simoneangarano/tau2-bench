@@ -1,0 +1,13 @@
+{
+  "id": "note_0ea0e432",
+  "note": "User hallucinates zip code.",
+  "author_email": "soham@sierra.ai",
+  "created_at": "2026-01-27T13:14:11.925249",
+  "simulation_id": "934754f8-61be-41ec-b103-690a4d543784",
+  "task_id": "85",
+  "trial": 0,
+  "source_results_file": "retail_control_gemini",
+  "simulation_file": "task_85_note_0ea0e432_simulation.json",
+  "error_source": "user",
+  "error_type": "hallucination"
+}

@@ -1,0 +1,13 @@
+{
+  "id": "note_17230a72",
+  "note": "Transcription error: agent unable to correctly capture user email, leading to authentication failure.",
+  "author_email": "soham@sierra.ai",
+  "created_at": "2026-01-27T13:51:15.260415",
+  "simulation_id": "1340a98f-0e73-4737-9125-72a4b7dcf460",
+  "task_id": "75",
+  "trial": 0,
+  "source_results_file": "retail_regular_gemini",
+  "simulation_file": "task_75_note_17230a72_simulation.json",
+  "error_source": "agent",
+  "error_type": "transcription"
+}

@@ -1,0 +1,13 @@
+{
+  "id": "note_2542e66f",
+  "note": "User takes time to convey goal of getting order under $1150. Agent understands but makes two erroneous modifications. Instruction-following error on tool results. Judge mostly correct but could have flagged tool call argument error as major.",
+  "author_email": "keshav@sierra.ai",
+  "created_at": "2026-01-26T13:52:34.607963",
+  "simulation_id": "abc6cb38-0f87-4e53-aa5d-54ca6522a0a7",
+  "task_id": "37",
+  "trial": 0,
+  "source_results_file": "retail_control_xai",
+  "simulation_file": "task_37_note_2542e66f_simulation.json",
+  "error_source": "agent",
+  "error_type": "logical"
+}

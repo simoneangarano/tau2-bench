@@ -1,0 +1,11 @@
+{
+  "id": "note_fa8e3121",
+  "note": "agent is unresponsive at the end after user spell out zip code",
+  "author_email": null,
+  "created_at": "2026-01-27T13:53:48.193602",
+  "simulation_id": "7367ebc2-60d4-4f50-9110-327544644f97",
+  "task_id": "3",
+  "trial": 0,
+  "source_results_file": "/Users/victorbarres/code/tau2-bench-private/data/exp/tau-voice-experiments/experiment_2025_01_22_v4_regular/retail_regular_openai/results.json",
+  "simulation_file": "task_3_note_fa8e3121_simulation.json"
+}

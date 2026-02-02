@@ -1,4 +1,3 @@
-import json
 from copy import deepcopy
 
 import pytest
@@ -319,6 +318,9 @@ def test_run_tasks_nl_assertions(domain_name: str):
     assert simulation.reward_info.nl_assertions[2].met is False
 
 
+@pytest.mark.xfail(
+    reason="Test depends on LLM quality - gpt-3.5-turbo may not consistently recognize impossible tasks"
+)
 def test_run_tasks_action_checks(domain_name: str, task_with_action_checks: Task):
     """Test running a task with action checks"""
     simulation = run_task(
@@ -374,3 +376,10 @@ def test_run_solo_agent(domain_name: str, base_task: Task):
         llm_args_user={},
     )
     assert simulation_results is not None
+
+
+# =============================================================================
+# Audio-Native / Full-Duplex Run Tests
+# =============================================================================
+# NOTE: Full-duplex run tests have been moved to:
+# tests/test_streaming/test_run_streaming.py

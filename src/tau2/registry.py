@@ -1,10 +1,11 @@
 import json
-from typing import Callable, Dict, Optional, Type
+from typing import Callable, Dict, Optional
 
 from loguru import logger
 from pydantic import BaseModel
 
-from tau2.agent.base import BaseAgent
+from tau2.agent.base_agent import FullDuplexAgent, HalfDuplexAgent
+from tau2.agent.discrete_time_audio_native_agent import DiscreteTimeAudioNativeAgent
 from tau2.agent.llm_agent import LLMAgent, LLMGTAgent, LLMSoloAgent
 from tau2.data_model.tasks import Task
 from tau2.domains.airline.environment import (
@@ -40,8 +41,9 @@ from tau2.domains.telecom.environment import (
     get_tasks_split as telecom_domain_get_tasks_split,
 )
 from tau2.environment.environment import Environment
-from tau2.user.base import BaseUser
 from tau2.user.user_simulator import DummyUser, UserSimulator
+from tau2.user.user_simulator_base import FullDuplexUser, HalfDuplexUser
+from tau2.user.user_simulator_streaming import VoiceStreamingUserSimulator
 
 
 class RegistryInfo(BaseModel):
@@ -57,21 +59,26 @@ class Registry:
     """Registry for Users, Agents, and Domains"""
 
     def __init__(self):
-        self._users: Dict[str, Type[BaseUser]] = {}
-        self._agents: Dict[str, Type[BaseAgent]] = {}
+        self._users: Dict[str, type] = {}  # HalfDuplexUser or FullDuplexUser
+        self._agents: Dict[str, type] = {}  # HalfDuplexAgent or FullDuplexAgent
         self._domains: Dict[str, Callable[[], Environment]] = {}
         self._tasks: Dict[str, Callable[[Optional[str]], list[Task]]] = {}
         self._task_splits: Dict[str, Callable[[], dict[str, list[str]]]] = {}
 
     def register_user(
         self,
-        user_constructor: type[BaseUser],
+        user_constructor: type,
         name: Optional[str] = None,
     ):
-        """Decorator to register a new User implementation"""
+        """Decorator to register a new User implementation (half-duplex or full-duplex)"""
         try:
-            if not issubclass(user_constructor, BaseUser):
-                raise TypeError(f"{user_constructor.__name__} must implement UserBase")
+            if not (
+                issubclass(user_constructor, HalfDuplexUser)
+                or issubclass(user_constructor, FullDuplexUser)
+            ):
+                raise TypeError(
+                    f"{user_constructor.__name__} must implement HalfDuplexUser or FullDuplexUser"
+                )
             key = name or user_constructor.__name__
             if key in self._users:
                 raise ValueError(f"User {key} already registered")
@@ -82,12 +89,17 @@ class Registry:
 
     def register_agent(
         self,
-        agent_constructor: type[BaseAgent],
+        agent_constructor: type,
         name: Optional[str] = None,
     ):
-        """Decorator to register a new Agent implementation"""
-        if not issubclass(agent_constructor, BaseAgent):
-            raise TypeError(f"{agent_constructor.__name__} must implement AgentBase")
+        """Decorator to register a new Agent implementation (half-duplex or full-duplex)"""
+        if not (
+            issubclass(agent_constructor, HalfDuplexAgent)
+            or issubclass(agent_constructor, FullDuplexAgent)
+        ):
+            raise TypeError(
+                f"{agent_constructor.__name__} must implement HalfDuplexAgent or FullDuplexAgent"
+            )
         key = name or agent_constructor.__name__
         if key in self._agents:
             raise ValueError(f"Agent {key} already registered")
@@ -129,14 +141,14 @@ class Registry:
             logger.error(f"Error registering tasks {name}: {str(e)}")
             raise
 
-    def get_user_constructor(self, name: str) -> Type[BaseUser]:
-        """Get a registered User implementation by name"""
+    def get_user_constructor(self, name: str) -> type:
+        """Get a registered User implementation by name (half-duplex or full-duplex)"""
         if name not in self._users:
             raise KeyError(f"User {name} not found in registry")
         return self._users[name]
 
-    def get_agent_constructor(self, name: str) -> Type[BaseAgent]:
-        """Get a registered Agent implementation by name"""
+    def get_agent_constructor(self, name: str) -> type:
+        """Get a registered Agent implementation by name (half-duplex or full-duplex)"""
         if name not in self._agents:
             raise KeyError(f"Agent {name} not found in registry")
         return self._agents[name]
@@ -204,12 +216,20 @@ class Registry:
 try:
     registry = Registry()
     logger.debug("Registering default components...")
+    # User implementations
     registry.register_user(UserSimulator, "user_simulator")
     registry.register_user(DummyUser, "dummy_user")
+    registry.register_user(
+        VoiceStreamingUserSimulator, "voice_streaming_user_simulator"
+    )
+
+    # Agent implementations
     registry.register_agent(LLMAgent, "llm_agent")
     registry.register_agent(LLMGTAgent, "llm_agent_gt")
     registry.register_agent(LLMSoloAgent, "llm_agent_solo")
-
+    registry.register_agent(
+        DiscreteTimeAudioNativeAgent, "discrete_time_audio_native_agent"
+    )
     registry.register_domain(mock_domain_get_environment, "mock")
     registry.register_tasks(mock_domain_get_tasks, "mock")
 

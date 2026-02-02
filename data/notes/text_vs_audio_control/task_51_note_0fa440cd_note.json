@@ -1,0 +1,13 @@
+{
+  "id": "note_0fa440cd",
+  "note": "Could also be logical error: Authentication failed. User spelled it out twice. Agent likely confused by seeing \"Sophia\" in transcription vs \"SOFIA\" in spelled-out version.",
+  "author_email": "keshav@sierra.ai",
+  "created_at": "2026-01-27T10:14:14.027906",
+  "simulation_id": "55cafaf5-24e2-4d18-b5e6-fad8f69ee757",
+  "task_id": "51",
+  "trial": 0,
+  "source_results_file": "retail_control_xai",
+  "simulation_file": "task_51_note_0fa440cd_simulation.json",
+  "error_source": "agent",
+  "error_type": "transcription"
+}

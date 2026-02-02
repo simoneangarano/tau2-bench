@@ -42,6 +42,11 @@ lint-fix:
 .PHONY: check-all
 check-all: lint format
 
+## Install pre-commit hooks
+.PHONY: setup-hooks
+setup-hooks:
+	pre-commit install
+
 ## Display online help for commonly used targets in this Makefile
 .PHONY: help
 help:

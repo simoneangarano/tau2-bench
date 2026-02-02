@@ -1,0 +1,11 @@
+{
+  "id": "note_3b4e4a14",
+  "note": "xai stops responding at the end after user spells out name",
+  "author_email": null,
+  "created_at": "2026-01-27T15:16:27.414267",
+  "simulation_id": "c66d80ad-f53c-4e44-aced-b7062333f7bd",
+  "task_id": "27",
+  "trial": 0,
+  "source_results_file": "/Users/victorbarres/code/tau2-bench-private/data/exp/tau-voice-experiments/experiment_2025_01_22_v4_regular/retail_regular_xai/results.json",
+  "simulation_file": "task_27_note_3b4e4a14_simulation.json"
+}

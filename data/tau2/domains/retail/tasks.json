@@ -72,7 +72,11 @@
                 }
             ],
             "communicate_info": [],
-            "nl_assertions": null
+            "nl_assertions": null,
+            "reward_basis": [
+                "DB",
+                "NL_ASSERTION"
+            ]
         }
     },
     {
@@ -146,7 +150,11 @@
                 }
             ],
             "communicate_info": [],
-            "nl_assertions": null
+            "nl_assertions": null,
+            "reward_basis": [
+                "DB",
+                "NL_ASSERTION"
+            ]
         }
     },
     {
@@ -269,7 +277,13 @@
             "communicate_info": [
                 "10"
             ],
-            "nl_assertions": null
+            "nl_assertions": [
+                "Agent should tell the user that there are 10 t-shirt options available."
+            ],
+            "reward_basis": [
+                "DB",
+                "NL_ASSERTION"
+            ]
         }
     },
     {
@@ -401,7 +415,13 @@
             "communicate_info": [
                 "10"
             ],
-            "nl_assertions": null
+            "nl_assertions": [
+                "Agent should tell the user that there are 10 t-shirt options available."
+            ],
+            "reward_basis": [
+                "DB",
+                "NL_ASSERTION"
+            ]
         }
     },
     {
@@ -548,8 +568,24 @@
             "communicate_info": [
                 "10"
             ],
-            "nl_assertions": null
-        }
+            "nl_assertions": [
+                "Agent should tell the user that there are 10 t-shirt options available."
+            ],
+            "reward_basis": [
+                "DB",
+                "NL_ASSERTION"
+            ]
+        },
+        "issues": [
+            {
+                "id": "issue_2b74ee61",
+                "title": "Task looks for number 10, but user does not ask for a number. It is happy with \"various\" or a description.",
+                "status": "open",
+                "created_at": "2026-01-16",
+                "author_email": "keshav@sierra.ai",
+                "simulation_file": "task_issues/task_4_issue_2b74ee61.json"
+            }
+        ]
     },
     {
         "id": "5",
@@ -619,8 +655,23 @@
                 }
             ],
             "communicate_info": [],
-            "nl_assertions": null
-        }
+            "nl_assertions": null,
+            "reward_basis": [
+                "DB",
+                "NL_ASSERTION"
+            ]
+        },
+        "issues": [
+            {
+                "id": "issue_770466c1",
+                "title": "Domain level issue. Agent is allowed to do user level actions e.g. look-up their order info, without authenticating the user. The tool should throw an error if user has not been authenticated yet.",
+                "description": "See above.",
+                "status": "open",
+                "created_at": "2026-01-16",
+                "author_email": "keshav@sierra.ai",
+                "simulation_file": "task_issues/task_5_issue_770466c1.json"
+            }
+        ]
     },
     {
         "id": "6",
@@ -701,7 +752,11 @@
                 }
             ],
             "communicate_info": [],
-            "nl_assertions": null
+            "nl_assertions": null,
+            "reward_basis": [
+                "DB",
+                "NL_ASSERTION"
+            ]
         }
     },
     {
@@ -783,8 +838,22 @@
                 }
             ],
             "communicate_info": [],
-            "nl_assertions": null
-        }
+            "nl_assertions": null,
+            "reward_basis": [
+                "DB",
+                "NL_ASSERTION"
+            ]
+        },
+        "issues": [
+            {
+                "id": "issue_9a37c151",
+                "title": "For tasks where user does not know order ID, mention explicitly that user does not know th",
+                "status": "open",
+                "created_at": "2026-01-16",
+                "author_email": "keshav@sierra.ai",
+                "simulation_file": "task_issues/task_7_issue_9a37c151.json"
+            }
+        ]
     },
     {
         "id": "8",
@@ -865,7 +934,11 @@
                 }
             ],
             "communicate_info": [],
-            "nl_assertions": null
+            "nl_assertions": null,
+            "reward_basis": [
+                "DB",
+                "NL_ASSERTION"
+            ]
         }
     },
     {
@@ -947,7 +1020,11 @@
                 }
             ],
             "communicate_info": [],
-            "nl_assertions": null
+            "nl_assertions": null,
+            "reward_basis": [
+                "DB",
+                "NL_ASSERTION"
+            ]
         }
     },
     {
@@ -1008,11 +1085,16 @@
                     "arguments": {
                         "summary": "The user wants to refund each order to the opposite order's payment method, but the agent cannot help."
                     },
-                    "info": null
+                    "info": null,
+                    "compare_args": []
                 }
             ],
             "communicate_info": [],
-            "nl_assertions": null
+            "nl_assertions": null,
+            "reward_basis": [
+                "DB",
+                "NL_ASSERTION"
+            ]
         }
     },
     {
@@ -1096,7 +1178,11 @@
                 }
             ],
             "communicate_info": [],
-            "nl_assertions": null
+            "nl_assertions": null,
+            "reward_basis": [
+                "DB",
+                "NL_ASSERTION"
+            ]
         }
     },
     {
@@ -1171,11 +1257,16 @@
                     "arguments": {
                         "summary": "The user prefers PayPal for refund, but the agent cannot help."
                     },
-                    "info": null
+                    "info": null,
+                    "compare_args": []
                 }
             ],
             "communicate_info": [],
-            "nl_assertions": null
+            "nl_assertions": null,
+            "reward_basis": [
+                "DB",
+                "NL_ASSERTION"
+            ]
         }
     },
     {
@@ -1260,7 +1351,11 @@
                 }
             ],
             "communicate_info": [],
-            "nl_assertions": null
+            "nl_assertions": null,
+            "reward_basis": [
+                "DB",
+                "NL_ASSERTION"
+            ]
         }
     },
     {
@@ -1341,7 +1436,11 @@
                 }
             ],
             "communicate_info": [],
-            "nl_assertions": null
+            "nl_assertions": null,
+            "reward_basis": [
+                "DB",
+                "NL_ASSERTION"
+            ]
         }
     },
     {
@@ -1431,7 +1530,11 @@
                 }
             ],
             "communicate_info": [],
-            "nl_assertions": null
+            "nl_assertions": null,
+            "reward_basis": [
+                "DB",
+                "NL_ASSERTION"
+            ]
         }
     },
     {
@@ -1538,7 +1641,13 @@
             "communicate_info": [
                 "8276.23"
             ],
-            "nl_assertions": null
+            "nl_assertions": [
+                "Agent should tell the user the total refund amount is $8,276.23."
+            ],
+            "reward_basis": [
+                "DB",
+                "NL_ASSERTION"
+            ]
         }
     },
     {
@@ -1619,7 +1728,11 @@
                 }
             ],
             "communicate_info": [],
-            "nl_assertions": null
+            "nl_assertions": null,
+            "reward_basis": [
+                "DB",
+                "NL_ASSERTION"
+            ]
         }
     },
     {
@@ -1693,7 +1806,11 @@
                 }
             ],
             "communicate_info": [],
-            "nl_assertions": null
+            "nl_assertions": null,
+            "reward_basis": [
+                "DB",
+                "NL_ASSERTION"
+            ]
         }
     },
     {
@@ -1783,7 +1900,14 @@
                 "54.04",
                 "41.64"
             ],
-            "nl_assertions": null
+            "nl_assertions": [
+                "Agent should tell the user that returning the water bottle gives a refund of $54.04.",
+                "Agent should tell the user that exchanging the pet bed and office chair saves $41.64 total."
+            ],
+            "reward_basis": [
+                "DB",
+                "NL_ASSERTION"
+            ]
         }
     },
     {
@@ -1903,7 +2027,11 @@
                 }
             ],
             "communicate_info": [],
-            "nl_assertions": null
+            "nl_assertions": null,
+            "reward_basis": [
+                "DB",
+                "NL_ASSERTION"
+            ]
         }
     },
     {
@@ -2037,7 +2165,13 @@
             "communicate_info": [
                 "44.08"
             ],
-            "nl_assertions": null
+            "nl_assertions": [
+                "Agent should tell the user their gift card balance is $44.08."
+            ],
+            "reward_basis": [
+                "DB",
+                "NL_ASSERTION"
+            ]
         }
     },
     {
@@ -2138,7 +2272,11 @@
                 }
             ],
             "communicate_info": [],
-            "nl_assertions": null
+            "nl_assertions": null,
+            "reward_basis": [
+                "DB",
+                "NL_ASSERTION"
+            ]
         }
     },
     {
@@ -2282,7 +2420,11 @@
                 }
             ],
             "communicate_info": [],
-            "nl_assertions": null
+            "nl_assertions": null,
+            "reward_basis": [
+                "DB",
+                "NL_ASSERTION"
+            ]
         }
     },
     {
@@ -2309,7 +2451,13 @@
                 "polyester",
                 "cotton"
             ],
-            "nl_assertions": null
+            "nl_assertions": [
+                "Agent should tell the user the materials of the two t-shirts are polyester and cotton."
+            ],
+            "reward_basis": [
+                "DB",
+                "NL_ASSERTION"
+            ]
         }
     },
     {
@@ -2384,7 +2532,11 @@
                 }
             ],
             "communicate_info": [],
-            "nl_assertions": null
+            "nl_assertions": null,
+            "reward_basis": [
+                "DB",
+                "NL_ASSERTION"
+            ]
         }
     },
     {
@@ -2476,11 +2628,16 @@
                     "arguments": {
                         "summary": "The user wants to refund to the amex credit card, but the agent cannot help."
                     },
-                    "info": null
+                    "info": null,
+                    "compare_args": []
                 }
             ],
             "communicate_info": [],
-            "nl_assertions": null
+            "nl_assertions": null,
+            "reward_basis": [
+                "DB",
+                "NL_ASSERTION"
+            ]
         }
     },
     {
@@ -2562,7 +2719,11 @@
                 }
             ],
             "communicate_info": [],
-            "nl_assertions": null
+            "nl_assertions": null,
+            "reward_basis": [
+                "DB",
+                "NL_ASSERTION"
+            ]
         }
     },
     {
@@ -2693,7 +2854,13 @@
             "communicate_info": [
                 "918.43"
             ],
-            "nl_assertions": null
+            "nl_assertions": [
+                "Agent should tell the user the total refund amount is $918.43."
+            ],
+            "reward_basis": [
+                "DB",
+                "NL_ASSERTION"
+            ]
         }
     },
     {
@@ -2786,7 +2953,13 @@
                 "189.57",
                 "208.6"
             ],
-            "nl_assertions": null
+            "nl_assertions": [
+                "Agent should tell the user the prices of the available bamboo skateboard options: $180.10, $189.57, and $208.60."
+            ],
+            "reward_basis": [
+                "DB",
+                "NL_ASSERTION"
+            ]
         }
     },
     {
@@ -2928,7 +3101,11 @@
             "communicate_info": [
                 "746342064230"
             ],
-            "nl_assertions": null
+            "nl_assertions": null,
+            "reward_basis": [
+                "DB",
+                "NL_ASSERTION"
+            ]
         }
     },
     {
@@ -3058,7 +3235,11 @@
             "communicate_info": [
                 "746342064230"
             ],
-            "nl_assertions": null
+            "nl_assertions": null,
+            "reward_basis": [
+                "DB",
+                "NL_ASSERTION"
+            ]
         }
     },
     {
@@ -3197,7 +3378,11 @@
             "communicate_info": [
                 "746342064230"
             ],
-            "nl_assertions": null
+            "nl_assertions": null,
+            "reward_basis": [
+                "DB",
+                "NL_ASSERTION"
+            ]
         }
     },
     {
@@ -3280,7 +3465,13 @@
             "communicate_info": [
                 "1093.34"
             ],
-            "nl_assertions": null
+            "nl_assertions": [
+                "Agent should tell the user the total refund amount is $1,093.34."
+            ],
+            "reward_basis": [
+                "DB",
+                "NL_ASSERTION"
+            ]
         }
     },
     {
@@ -3363,7 +3554,13 @@
             "communicate_info": [
                 "1093.34"
             ],
-            "nl_assertions": null
+            "nl_assertions": [
+                "Agent should tell the user the total refund amount is $1,093.34."
+            ],
+            "reward_basis": [
+                "DB",
+                "NL_ASSERTION"
+            ]
         }
     },
     {
@@ -3455,7 +3652,11 @@
                 }
             ],
             "communicate_info": [],
-            "nl_assertions": null
+            "nl_assertions": null,
+            "reward_basis": [
+                "DB",
+                "NL_ASSERTION"
+            ]
         }
     },
     {
@@ -3502,7 +3703,14 @@
                 "camera",
                 "481.5"
             ],
-            "nl_assertions": null
+            "nl_assertions": [
+                "Agent should tell the user the most expensive item in the order is the camera.",
+                "Agent should tell the user the camera costs $481.50."
+            ],
+            "reward_basis": [
+                "DB",
+                "NL_ASSERTION"
+            ]
         }
     },
     {
@@ -3575,7 +3783,14 @@
                 "camera",
                 "481.50"
             ],
-            "nl_assertions": null
+            "nl_assertions": [
+                "Agent should tell the user the most expensive item in the order is the camera.",
+                "Agent should tell the user the camera costs $481.50."
+            ],
+            "reward_basis": [
+                "DB",
+                "NL_ASSERTION"
+            ]
         }
     },
     {
@@ -3638,7 +3853,14 @@
                 "camera",
                 "481.50"
             ],
-            "nl_assertions": null
+            "nl_assertions": [
+                "Agent should tell the user the most expensive item in the order is the camera.",
+                "Agent should tell the user the camera costs $481.50."
+            ],
+            "reward_basis": [
+                "DB",
+                "NL_ASSERTION"
+            ]
         }
     },
     {
@@ -3715,7 +3937,13 @@
             "communicate_info": [
                 "46.66"
             ],
-            "nl_assertions": null
+            "nl_assertions": [
+                "Agent should tell the user the cheapest t-shirt costs $46.66."
+            ],
+            "reward_basis": [
+                "DB",
+                "NL_ASSERTION"
+            ]
         }
     },
     {
@@ -3776,7 +4004,14 @@
                 "60",
                 "mastercard"
             ],
-            "nl_assertions": null
+            "nl_assertions": [
+                "Agent should tell the user their gift card balance is $60.",
+                "Agent should tell the user their recent order was paid with a Mastercard."
+            ],
+            "reward_basis": [
+                "DB",
+                "NL_ASSERTION"
+            ]
         }
     },
     {
@@ -3908,7 +4143,11 @@
                 }
             ],
             "communicate_info": [],
-            "nl_assertions": null
+            "nl_assertions": null,
+            "reward_basis": [
+                "DB",
+                "NL_ASSERTION"
+            ]
         }
     },
     {
@@ -4040,7 +4279,11 @@
                 }
             ],
             "communicate_info": [],
-            "nl_assertions": null
+            "nl_assertions": null,
+            "reward_basis": [
+                "DB",
+                "NL_ASSERTION"
+            ]
         }
     },
     {
@@ -4121,7 +4364,15 @@
                 "60621",
                 "64GB"
             ],
-            "nl_assertions": null
+            "nl_assertions": [
+                "Agent should tell the user the tracking number is 840887978435.",
+                "Agent should tell the user the order was shipped to 943 Maple Drive, Suite 356, Chicago, IL 60621.",
+                "Agent should tell the user the tablet storage is 64GB."
+            ],
+            "reward_basis": [
+                "DB",
+                "NL_ASSERTION"
+            ]
         }
     },
     {
@@ -4197,7 +4448,13 @@
             "communicate_info": [
                 "17.99"
             ],
-            "nl_assertions": null
+            "nl_assertions": [
+                "Agent should tell the user they will get back $17.99."
+            ],
+            "reward_basis": [
+                "DB",
+                "NL_ASSERTION"
+            ]
         }
     },
     {
@@ -4273,7 +4530,13 @@
             "communicate_info": [
                 "9.89"
             ],
-            "nl_assertions": null
+            "nl_assertions": [
+                "Agent should tell the user the price difference is $9.89."
+            ],
+            "reward_basis": [
+                "DB",
+                "NL_ASSERTION"
+            ]
         }
     },
     {
@@ -4364,7 +4627,14 @@
                 "1126.04",
                 "1497.65"
             ],
-            "nl_assertions": null
+            "nl_assertions": [
+                "Agent should tell the user the total refund amount is $1,126.04.",
+                "Agent should tell the user the total paid for remaining items is $1,497.65."
+            ],
+            "reward_basis": [
+                "DB",
+                "NL_ASSERTION"
+            ]
         }
     },
     {
@@ -4455,7 +4725,14 @@
                 "1095.55",
                 "1528.14"
             ],
-            "nl_assertions": null
+            "nl_assertions": [
+                "Agent should tell the user the total refund amount is $1,095.55.",
+                "Agent should tell the user the total paid for remaining items is $1,528.14."
+            ],
+            "reward_basis": [
+                "DB",
+                "NL_ASSERTION"
+            ]
         }
     },
     {
@@ -4534,7 +4811,11 @@
                 }
             ],
             "communicate_info": [],
-            "nl_assertions": null
+            "nl_assertions": null,
+            "reward_basis": [
+                "DB",
+                "NL_ASSERTION"
+            ]
         }
     },
     {
@@ -4648,7 +4929,11 @@
                 }
             ],
             "communicate_info": [],
-            "nl_assertions": null
+            "nl_assertions": null,
+            "reward_basis": [
+                "DB",
+                "NL_ASSERTION"
+            ]
         }
     },
     {
@@ -4677,11 +4962,16 @@
                     "arguments": {
                         "summary": "The user urgently needs to undo a cancellation of an order and insists on receiving the items from the initial order as soon as possible. The user acknowledges the policy but requests exceptional measures due to the urgency of the situation."
                     },
-                    "info": null
+                    "info": null,
+                    "compare_args": []
                 }
             ],
             "communicate_info": [],
-            "nl_assertions": null
+            "nl_assertions": null,
+            "reward_basis": [
+                "DB",
+                "NL_ASSERTION"
+            ]
         }
     },
     {
@@ -4760,7 +5050,11 @@
                 }
             ],
             "communicate_info": [],
-            "nl_assertions": null
+            "nl_assertions": null,
+            "reward_basis": [
+                "DB",
+                "NL_ASSERTION"
+            ]
         }
     },
     {
@@ -4834,7 +5128,11 @@
                 }
             ],
             "communicate_info": [],
-            "nl_assertions": null
+            "nl_assertions": null,
+            "reward_basis": [
+                "DB",
+                "NL_ASSERTION"
+            ]
         }
     },
     {
@@ -4913,7 +5211,11 @@
                 }
             ],
             "communicate_info": [],
-            "nl_assertions": null
+            "nl_assertions": null,
+            "reward_basis": [
+                "DB",
+                "NL_ASSERTION"
+            ]
         }
     },
     {
@@ -5045,7 +5347,13 @@
             "communicate_info": [
                 "3646.68"
             ],
-            "nl_assertions": null
+            "nl_assertions": [
+                "Agent should tell the user the total refund amount is $3,646.68."
+            ],
+            "reward_basis": [
+                "DB",
+                "NL_ASSERTION"
+            ]
         }
     },
     {
@@ -5187,7 +5495,11 @@
                 }
             ],
             "communicate_info": [],
-            "nl_assertions": null
+            "nl_assertions": null,
+            "reward_basis": [
+                "DB",
+                "NL_ASSERTION"
+            ]
         }
     },
     {
@@ -5277,7 +5589,11 @@
                 }
             ],
             "communicate_info": [],
-            "nl_assertions": null
+            "nl_assertions": null,
+            "reward_basis": [
+                "DB",
+                "NL_ASSERTION"
+            ]
         }
     },
     {
@@ -5301,7 +5617,11 @@
         "evaluation_criteria": {
             "actions": [],
             "communicate_info": [],
-            "nl_assertions": null
+            "nl_assertions": null,
+            "reward_basis": [
+                "DB",
+                "NL_ASSERTION"
+            ]
         }
     },
     {
@@ -5385,7 +5705,11 @@
                 }
             ],
             "communicate_info": [],
-            "nl_assertions": null
+            "nl_assertions": null,
+            "reward_basis": [
+                "DB",
+                "NL_ASSERTION"
+            ]
         }
     },
     {
@@ -5470,7 +5794,14 @@
                 "164.28",
                 "625.60"
             ],
-            "nl_assertions": null
+            "nl_assertions": [
+                "Agent should tell the user the refund for the cancelled desk lamp order is $164.28.",
+                "Agent should tell the user the total price of order #W2702727 is $625.60."
+            ],
+            "reward_basis": [
+                "DB",
+                "NL_ASSERTION"
+            ]
         }
     },
     {
@@ -5538,7 +5869,13 @@
             "communicate_info": [
                 "242.92"
             ],
-            "nl_assertions": null
+            "nl_assertions": [
+                "Agent should tell the user the price of the new earbuds is $242.92."
+            ],
+            "reward_basis": [
+                "DB",
+                "NL_ASSERTION"
+            ]
         }
     },
     {
@@ -5612,7 +5949,11 @@
                 }
             ],
             "communicate_info": [],
-            "nl_assertions": null
+            "nl_assertions": null,
+            "reward_basis": [
+                "DB",
+                "NL_ASSERTION"
+            ]
         }
     },
     {
@@ -5682,7 +6023,14 @@
                 "302.67",
                 "20 hours"
             ],
-            "nl_assertions": null
+            "nl_assertions": [
+                "Agent should tell the user the Bluetooth speaker costs $302.67.",
+                "Agent should tell the user the battery life is 20 hours."
+            ],
+            "reward_basis": [
+                "DB",
+                "NL_ASSERTION"
+            ]
         }
     },
     {
@@ -5776,7 +6124,15 @@
                 "20 hours",
                 "1288.65"
             ],
-            "nl_assertions": null
+            "nl_assertions": [
+                "Agent should tell the user the Bluetooth speaker costs $302.67.",
+                "Agent should tell the user the battery life is 20 hours.",
+                "Agent should tell the user the new order total is $1,288.65."
+            ],
+            "reward_basis": [
+                "DB",
+                "NL_ASSERTION"
+            ]
         }
     },
     {
@@ -5881,7 +6237,11 @@
                 }
             ],
             "communicate_info": [],
-            "nl_assertions": null
+            "nl_assertions": null,
+            "reward_basis": [
+                "DB",
+                "NL_ASSERTION"
+            ]
         }
     },
     {
@@ -5932,7 +6292,11 @@
                 }
             ],
             "communicate_info": [],
-            "nl_assertions": null
+            "nl_assertions": null,
+            "reward_basis": [
+                "DB",
+                "NL_ASSERTION"
+            ]
         }
     },
     {
@@ -6000,7 +6364,11 @@
                 }
             ],
             "communicate_info": [],
-            "nl_assertions": null
+            "nl_assertions": null,
+            "reward_basis": [
+                "DB",
+                "NL_ASSERTION"
+            ]
         }
     },
     {
@@ -6073,7 +6441,13 @@
             "communicate_info": [
                 "829.43"
             ],
-            "nl_assertions": null
+            "nl_assertions": [
+                "Agent should tell the user the order total is $829.43."
+            ],
+            "reward_basis": [
+                "DB",
+                "NL_ASSERTION"
+            ]
         }
     },
     {
@@ -6136,7 +6510,13 @@
             "communicate_info": [
                 "829.43"
             ],
-            "nl_assertions": null
+            "nl_assertions": [
+                "Agent should tell the user the order total is $829.43."
+            ],
+            "reward_basis": [
+                "DB",
+                "NL_ASSERTION"
+            ]
         }
     },
     {
@@ -6196,7 +6576,11 @@
                 }
             ],
             "communicate_info": [],
-            "nl_assertions": null
+            "nl_assertions": null,
+            "reward_basis": [
+                "DB",
+                "NL_ASSERTION"
+            ]
         }
     },
     {
@@ -6238,7 +6622,13 @@
             "communicate_info": [
                 "22.55"
             ],
-            "nl_assertions": null
+            "nl_assertions": [
+                "Agent should tell the user they need to pay $22.55 for the price difference."
+            ],
+            "reward_basis": [
+                "DB",
+                "NL_ASSERTION"
+            ]
         }
     },
     {
@@ -6292,7 +6682,11 @@
                 }
             ],
             "communicate_info": [],
-            "nl_assertions": null
+            "nl_assertions": null,
+            "reward_basis": [
+                "DB",
+                "NL_ASSERTION"
+            ]
         }
     },
     {
@@ -6346,7 +6740,11 @@
                 }
             ],
             "communicate_info": [],
-            "nl_assertions": null
+            "nl_assertions": null,
+            "reward_basis": [
+                "DB",
+                "NL_ASSERTION"
+            ]
         }
     },
     {
@@ -6386,7 +6784,11 @@
                 }
             ],
             "communicate_info": [],
-            "nl_assertions": null
+            "nl_assertions": null,
+            "reward_basis": [
+                "DB",
+                "NL_ASSERTION"
+            ]
         }
     },
     {
@@ -6435,7 +6837,11 @@
                 }
             ],
             "communicate_info": [],
-            "nl_assertions": null
+            "nl_assertions": null,
+            "reward_basis": [
+                "DB",
+                "NL_ASSERTION"
+            ]
         }
     },
     {
@@ -6475,7 +6881,11 @@
                 }
             ],
             "communicate_info": [],
-            "nl_assertions": null
+            "nl_assertions": null,
+            "reward_basis": [
+                "DB",
+                "NL_ASSERTION"
+            ]
         }
     },
     {
@@ -6520,7 +6930,13 @@
             "communicate_info": [
                 "1939.05"
             ],
-            "nl_assertions": null
+            "nl_assertions": [
+                "Agent should tell the user the total price of all grills is $1,939.05."
+            ],
+            "reward_basis": [
+                "DB",
+                "NL_ASSERTION"
+            ]
         }
     },
     {
@@ -6560,7 +6976,11 @@
                 }
             ],
             "communicate_info": [],
-            "nl_assertions": null
+            "nl_assertions": null,
+            "reward_basis": [
+                "DB",
+                "NL_ASSERTION"
+            ]
         }
     },
     {
@@ -6623,7 +7043,11 @@
                 }
             ],
             "communicate_info": [],
-            "nl_assertions": null
+            "nl_assertions": null,
+            "reward_basis": [
+                "DB",
+                "NL_ASSERTION"
+            ]
         }
     },
     {
@@ -6663,7 +7087,11 @@
                 }
             ],
             "communicate_info": [],
-            "nl_assertions": null
+            "nl_assertions": null,
+            "reward_basis": [
+                "DB",
+                "NL_ASSERTION"
+            ]
         }
     },
     {
@@ -6703,7 +7131,11 @@
                 }
             ],
             "communicate_info": [],
-            "nl_assertions": null
+            "nl_assertions": null,
+            "reward_basis": [
+                "DB",
+                "NL_ASSERTION"
+            ]
         }
     },
     {
@@ -6746,7 +7178,11 @@
                 }
             ],
             "communicate_info": [],
-            "nl_assertions": null
+            "nl_assertions": null,
+            "reward_basis": [
+                "DB",
+                "NL_ASSERTION"
+            ]
         }
     },
     {
@@ -6786,7 +7222,11 @@
                 }
             ],
             "communicate_info": [],
-            "nl_assertions": null
+            "nl_assertions": null,
+            "reward_basis": [
+                "DB",
+                "NL_ASSERTION"
+            ]
         }
     },
     {
@@ -6823,7 +7263,11 @@
                 }
             ],
             "communicate_info": [],
-            "nl_assertions": null
+            "nl_assertions": null,
+            "reward_basis": [
+                "DB",
+                "NL_ASSERTION"
+            ]
         }
     },
     {
@@ -6860,7 +7304,11 @@
                 }
             ],
             "communicate_info": [],
-            "nl_assertions": null
+            "nl_assertions": null,
+            "reward_basis": [
+                "DB",
+                "NL_ASSERTION"
+            ]
         }
     },
     {
@@ -6900,7 +7348,11 @@
                 }
             ],
             "communicate_info": [],
-            "nl_assertions": null
+            "nl_assertions": null,
+            "reward_basis": [
+                "DB",
+                "NL_ASSERTION"
+            ]
         }
     },
     {
@@ -6954,7 +7406,11 @@
                 }
             ],
             "communicate_info": [],
-            "nl_assertions": null
+            "nl_assertions": null,
+            "reward_basis": [
+                "DB",
+                "NL_ASSERTION"
+            ]
         }
     },
     {
@@ -7035,7 +7491,11 @@
                 }
             ],
             "communicate_info": [],
-            "nl_assertions": null
+            "nl_assertions": null,
+            "reward_basis": [
+                "DB",
+                "NL_ASSERTION"
+            ]
         }
     },
     {
@@ -7069,7 +7529,11 @@
                 }
             ],
             "communicate_info": [],
-            "nl_assertions": null
+            "nl_assertions": null,
+            "reward_basis": [
+                "DB",
+                "NL_ASSERTION"
+            ]
         }
     },
     {
@@ -7111,7 +7575,16 @@
                 "white",
                 "full"
             ],
-            "nl_assertions": null
+            "nl_assertions": [
+                "Agent should tell the user the cheapest mechanical keyboard costs $226.11.",
+                "Agent should tell the user the keyboard switch type is tactile.",
+                "Agent should tell the user the keyboard backlight is white.",
+                "Agent should tell the user the keyboard size is full."
+            ],
+            "reward_basis": [
+                "DB",
+                "NL_ASSERTION"
+            ]
         }
     },
     {
@@ -7145,7 +7618,11 @@
                 }
             ],
             "communicate_info": [],
-            "nl_assertions": null
+            "nl_assertions": null,
+            "reward_basis": [
+                "DB",
+                "NL_ASSERTION"
+            ]
         }
     },
     {
@@ -7199,7 +7676,11 @@
                 }
             ],
             "communicate_info": [],
-            "nl_assertions": null
+            "nl_assertions": null,
+            "reward_basis": [
+                "DB",
+                "NL_ASSERTION"
+            ]
         }
     },
     {
@@ -7250,7 +7731,11 @@
                 }
             ],
             "communicate_info": [],
-            "nl_assertions": null
+            "nl_assertions": null,
+            "reward_basis": [
+                "DB",
+                "NL_ASSERTION"
+            ]
         }
     },
     {
@@ -7290,7 +7775,11 @@
                 }
             ],
             "communicate_info": [],
-            "nl_assertions": null
+            "nl_assertions": null,
+            "reward_basis": [
+                "DB",
+                "NL_ASSERTION"
+            ]
         }
     },
     {
@@ -7330,7 +7819,11 @@
                 }
             ],
             "communicate_info": [],
-            "nl_assertions": null
+            "nl_assertions": null,
+            "reward_basis": [
+                "DB",
+                "NL_ASSERTION"
+            ]
         }
     },
     {
@@ -7389,7 +7882,15 @@
                 "60.78",
                 "107.09"
             ],
-            "nl_assertions": null
+            "nl_assertions": [
+                "Agent should tell the user the price difference for one laptop exchange is $167.87.",
+                "Agent should tell the user the price difference for the other laptop exchange is $60.78 (a refund).",
+                "Agent should tell the user the total amount to pay today is $107.09."
+            ],
+            "reward_basis": [
+                "DB",
+                "NL_ASSERTION"
+            ]
         }
     },
     {
@@ -7443,7 +7944,11 @@
                 }
             ],
             "communicate_info": [],
-            "nl_assertions": null
+            "nl_assertions": null,
+            "reward_basis": [
+                "DB",
+                "NL_ASSERTION"
+            ]
         }
     },
     {
@@ -7497,7 +8002,11 @@
                 }
             ],
             "communicate_info": [],
-            "nl_assertions": null
+            "nl_assertions": null,
+            "reward_basis": [
+                "DB",
+                "NL_ASSERTION"
+            ]
         }
     },
     {
@@ -7563,7 +8072,11 @@
                 }
             ],
             "communicate_info": [],
-            "nl_assertions": null
+            "nl_assertions": null,
+            "reward_basis": [
+                "DB",
+                "NL_ASSERTION"
+            ]
         }
     },
     {
@@ -7620,7 +8133,11 @@
                 }
             ],
             "communicate_info": [],
-            "nl_assertions": null
+            "nl_assertions": null,
+            "reward_basis": [
+                "DB",
+                "NL_ASSERTION"
+            ]
         }
     },
     {
@@ -7674,7 +8191,11 @@
                 }
             ],
             "communicate_info": [],
-            "nl_assertions": null
+            "nl_assertions": null,
+            "reward_basis": [
+                "DB",
+                "NL_ASSERTION"
+            ]
         }
     },
     {
@@ -7743,7 +8264,11 @@
                 }
             ],
             "communicate_info": [],
-            "nl_assertions": null
+            "nl_assertions": null,
+            "reward_basis": [
+                "DB",
+                "NL_ASSERTION"
+            ]
         }
     },
     {
@@ -7812,7 +8337,11 @@
                 }
             ],
             "communicate_info": [],
-            "nl_assertions": null
+            "nl_assertions": null,
+            "reward_basis": [
+                "DB",
+                "NL_ASSERTION"
+            ]
         }
     },
     {
@@ -7893,7 +8422,13 @@
             "communicate_info": [
                 "286422338955"
             ],
-            "nl_assertions": null
+            "nl_assertions": [
+                "Agent should provide the tracking number 286422338955."
+            ],
+            "reward_basis": [
+                "DB",
+                "NL_ASSERTION"
+            ]
         }
     },
     {
@@ -7986,7 +8521,13 @@
             "communicate_info": [
                 "286422338955"
             ],
-            "nl_assertions": null
+            "nl_assertions": [
+                "Agent should provide the tracking number 286422338955."
+            ],
+            "reward_basis": [
+                "DB",
+                "NL_ASSERTION"
+            ]
         }
     },
     {
@@ -8030,6 +8571,10 @@
             "communicate_info": [],
             "nl_assertions": [
                 "Agent should exchange both tea kettles (same style) to the items requested"
+            ],
+            "reward_basis": [
+                "DB",
+                "NL_ASSERTION"
             ]
         }
     },
@@ -8072,6 +8617,10 @@
             "communicate_info": [],
             "nl_assertions": [
                 "Agent should process the exchange."
+            ],
+            "reward_basis": [
+                "DB",
+                "NL_ASSERTION"
             ]
         }
     },
@@ -8129,6 +8678,10 @@
             "communicate_info": [],
             "nl_assertions": [
                 "Agent should exchange items in both orders."
+            ],
+            "reward_basis": [
+                "DB",
+                "NL_ASSERTION"
             ]
         }
     },
@@ -8171,8 +8724,11 @@
                 "346.93"
             ],
             "nl_assertions": [
-                "Agent should make the return",
-                "Agent should communicate the refund to user."
+                "Agent should tell the user the refund amount is $346.93."
+            ],
+            "reward_basis": [
+                "DB",
+                "NL_ASSERTION"
             ]
         }
     },
@@ -8244,6 +8800,10 @@
             "nl_assertions": [
                 "Agent should make changes to address on order and user profile",
                 "Agent should modify the pending order."
+            ],
+            "reward_basis": [
+                "DB",
+                "NL_ASSERTION"
             ]
         }
     },
@@ -8316,6 +8876,10 @@
                 "Agent should modify address for the order",
                 "Agent should modify user address",
                 "Agent should modify the items in the pending order."
+            ],
+            "reward_basis": [
+                "DB",
+                "NL_ASSERTION"
             ]
         }
     },
@@ -8387,6 +8951,10 @@
             "communicate_info": [],
             "nl_assertions": [
                 "Agent should modify the items and address as requested."
+            ],
+            "reward_basis": [
+                "DB",
+                "NL_ASSERTION"
             ]
         }
     },
@@ -8456,7 +9024,11 @@
                 }
             ],
             "communicate_info": [],
-            "nl_assertions": null
+            "nl_assertions": null,
+            "reward_basis": [
+                "DB",
+                "NL_ASSERTION"
+            ]
         }
     },
     {
@@ -8501,6 +9073,10 @@
             "communicate_info": [],
             "nl_assertions": [
                 "Agent should cancel all pending orders"
+            ],
+            "reward_basis": [
+                "DB",
+                "NL_ASSERTION"
             ]
         }
     }

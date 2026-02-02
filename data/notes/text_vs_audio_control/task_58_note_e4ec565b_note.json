@@ -1,0 +1,13 @@
+{
+  "id": "note_e4ec565b",
+  "note": "User error. User communicated pressure needed but not capacity, then assumed 2L matches previous order capacity (info not available).",
+  "author_email": "keshav@sierra.ai",
+  "created_at": "2026-01-27T11:02:08.680441",
+  "simulation_id": "186a8186-98e0-4b1c-8db1-1d569a5af392",
+  "task_id": "58",
+  "trial": 0,
+  "source_results_file": "tmp/qa_results/oai_retailctrl_rerun/retail_control_openai/results.json",
+  "simulation_file": "task_58_note_e4ec565b_simulation.json",
+  "error_source": "user",
+  "error_type": "hallucination"
+}

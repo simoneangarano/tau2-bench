@@ -1,0 +1,11 @@
+{
+  "id": "note_43d47489",
+  "note": "user spells out name as agent is talking and then asks a question (at the end) but agent doesn't responds.",
+  "author_email": null,
+  "created_at": "2026-01-27T15:21:29.824730",
+  "simulation_id": "be90f27a-a2ed-4d7c-85ae-736abbb490e0",
+  "task_id": "31",
+  "trial": 0,
+  "source_results_file": "/Users/victorbarres/code/tau2-bench-private/data/exp/tau-voice-experiments/experiment_2025_01_22_v4_regular/retail_regular_xai/results.json",
+  "simulation_file": "task_31_note_43d47489_simulation.json"
+}

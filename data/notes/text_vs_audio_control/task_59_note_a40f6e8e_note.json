@@ -1,0 +1,13 @@
+{
+  "id": "note_a40f6e8e",
+  "note": "Agent cancelled the wrong order. Logical error.",
+  "author_email": "keshav@sierra.ai",
+  "created_at": "2026-01-27T11:10:10.596480",
+  "simulation_id": "e8e059f0-4667-4731-9604-b31373da75ec",
+  "task_id": "59",
+  "trial": 0,
+  "source_results_file": "tmp/qa_results/oai_retailctrl_rerun/retail_control_openai/results.json",
+  "simulation_file": "task_59_note_a40f6e8e_simulation.json",
+  "error_source": "agent",
+  "error_type": "logical"
+}
