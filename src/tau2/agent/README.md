@@ -1,5 +1,230 @@
-
 # Agent Developer Guide
+
+## Overview
+
+Agents are the system-under-test in tau2 evals. An agent interacts with a simulated user and uses environment tools (API endpoints) to resolve customer service tasks. The eval framework scores the agent on whether it takes the correct actions and follows domain policy.
+
+There are two communication protocols, each with a corresponding base class:
+
+- **Half-Duplex** (`HalfDuplexAgent`) -- Turn-based text conversations. One party speaks at a time.
+- **Full-Duplex** (`FullDuplexAgent`) -- Tick-based streaming (e.g., voice). Both parties can speak simultaneously.
+
+## Architecture
+
+```
+HalfDuplexParticipant          FullDuplexParticipant
+  (base/participant.py)          (base/participant.py)
+        |                              |
+  HalfDuplexAgent               FullDuplexAgent
+  (base_agent.py)               (base_agent.py)
+        |                              |
+     LLMAgent              DiscreteTimeAudioNativeAgent
+  (llm_agent.py)      (discrete_time_audio_native_agent.py)
+```
+
+### HalfDuplexAgent
+
+For turn-based agents. You must implement:
+
+- `get_init_state(message_history) -> StateType` -- Return the initial agent state.
+- `generate_next_message(message, state) -> (AssistantMessage, StateType)` -- Given a user or tool message and the current state, produce the next assistant message.
+
+Input types: `UserMessage | ToolMessage | MultiToolMessage`
+Output type: `AssistantMessage`
+
+### FullDuplexAgent
+
+For streaming / tick-based agents (e.g., voice). You must implement:
+
+- `get_init_state(message_history) -> StateType` -- Return the initial agent state.
+- `get_next_chunk(state, incoming_chunk) -> (AssistantMessage, StateType)` -- Process one tick of input and produce one tick of output.
+
+Input types: `UserMessage | ToolMessage | MultiToolMessage`
+Output type: `AssistantMessage`
+
+### Shared constructor contract
+
+Both `HalfDuplexAgent` and `FullDuplexAgent` expect these constructor arguments:
+
+```python
+def __init__(self, tools: list[Tool], domain_policy: str):
+```
+
+- `tools` -- The environment tools (API endpoints) the agent can call.
+- `domain_policy` -- The policy text the agent must follow.
+
+If your agent uses an LLM, mix in `LLMConfigMixin` (from `tau2.agent.base.llm_config`) which adds `llm: str` and `llm_args: dict` parameters.
+
+## Core Agent Types
+
+### LLMAgent (text evals, half-duplex)
+
+`LLMAgent` is the standard agent for text-based evals. It wraps an LLM with tool-calling support in a turn-based loop.
+
+- **Base classes:** `LLMConfigMixin`, `HalfDuplexAgent`
+- **State:** `LLMAgentState` (holds `system_messages` and `messages`)
+- **Constructor:** `tools`, `domain_policy`, `llm`, `llm_args`
+
+```python
+from tau2.agent import LLMAgent
+
+# Create the agent
+agent = LLMAgent(
+    tools=env.get_tools(),
+    domain_policy=env.get_policy(),
+    llm="gpt-4o",
+    llm_args={"temperature": 0.7},
+)
+
+# Initialize state
+state = agent.get_init_state()
+
+# Turn-based loop (simplified)
+response, state = agent.generate_next_message(user_msg, state)
+```
+
+### DiscreteTimeAudioNativeAgent (voice evals, full-duplex)
+
+`DiscreteTimeAudioNativeAgent` is the agent for voice evals. It connects to an audio-native API (OpenAI Realtime, Gemini Live, xAI, Nova, Qwen, Deepgram) and exchanges audio in discrete time ticks.
+
+- **Base class:** `FullDuplexAgent`
+- **State:** `DiscreteTimeAgentState` (tracks tick count, audio bytes, message history)
+- **Constructor:** `tools`, `domain_policy`, plus provider-specific options (`tick_duration_ms`, `provider`, `model`, `modality`, etc.)
+
+```python
+from tau2.agent.discrete_time_audio_native_agent import DiscreteTimeAudioNativeAgent
+
+# OpenAI Realtime (default provider)
+agent = DiscreteTimeAudioNativeAgent(
+    tools=env.get_tools(),
+    domain_policy=env.get_policy(),
+    tick_duration_ms=1000,
+)
+
+# Gemini Live
+agent = DiscreteTimeAudioNativeAgent(
+    tools=env.get_tools(),
+    domain_policy=env.get_policy(),
+    tick_duration_ms=1000,
+    provider="gemini",
+)
+
+# Initialize state (connects to the API)
+state = agent.get_init_state()
+
+# Tick-based loop (driven by the orchestrator)
+response, state = agent.get_next_chunk(state, user_chunk)
+```
+
+## How to Develop a New Agent
+
+### Step 1: Choose the right base class
+
+| Eval type | Base class | Key method |
+|-----------|-----------|------------|
+| Text (turn-based) | `HalfDuplexAgent` | `generate_next_message()` |
+| Voice (tick-based) | `FullDuplexAgent` | `get_next_chunk()` |
+
+### Step 2: Define a state class
+
+Your agent needs a state object to track conversation history and any internal data between turns/ticks. Use a Pydantic `BaseModel`:
+
+```python
+from pydantic import BaseModel
+from tau2.data_model.message import SystemMessage, Message
+
+class MyAgentState(BaseModel):
+    system_messages: list[SystemMessage]
+    messages: list[Message]
+    # ... any additional fields your agent needs
+```
+
+For full-duplex agents, you can extend `StreamingState` (from `tau2.agent.base.streaming`) which includes tick-tracking fields out of the box.
+
+### Step 3: Implement the agent
+
+Here is a minimal half-duplex agent skeleton:
+
+```python
+from typing import List, Optional
+from tau2.agent.base.llm_config import LLMConfigMixin
+from tau2.agent.base_agent import HalfDuplexAgent, ValidAgentInputMessage
+from tau2.data_model.message import AssistantMessage, Message, SystemMessage
+from tau2.environment.tool import Tool
+
+class MyAgent(LLMConfigMixin, HalfDuplexAgent["MyAgentState"]):
+    def __init__(
+        self,
+        tools: List[Tool],
+        domain_policy: str,
+        llm: str,
+        llm_args: Optional[dict] = None,
+    ):
+        super().__init__(
+            tools=tools,
+            domain_policy=domain_policy,
+            llm=llm,
+            llm_args=llm_args,
+        )
+
+    def get_init_state(
+        self, message_history: Optional[list[Message]] = None
+    ) -> "MyAgentState":
+        return MyAgentState(
+            system_messages=[SystemMessage(role="system", content="...")],
+            messages=message_history or [],
+        )
+
+    def generate_next_message(
+        self, message: ValidAgentInputMessage, state: "MyAgentState"
+    ) -> tuple[AssistantMessage, "MyAgentState"]:
+        # Your logic here: call LLM, process tool results, etc.
+        ...
+```
+
+And a minimal full-duplex agent skeleton:
+
+```python
+from typing import List, Optional, Tuple
+from tau2.agent.base_agent import FullDuplexAgent, ValidAgentInputMessage
+from tau2.data_model.message import AssistantMessage, Message
+from tau2.environment.tool import Tool
+
+class MyStreamingAgent(FullDuplexAgent["MyStreamingState"]):
+    def __init__(
+        self,
+        tools: List[Tool],
+        domain_policy: str,
+        # ... provider-specific params
+    ):
+        super().__init__(tools=tools, domain_policy=domain_policy)
+
+    def get_init_state(
+        self, message_history: Optional[list[Message]] = None
+    ) -> "MyStreamingState":
+        # Initialize state and connect to any external APIs
+        ...
+
+    def get_next_chunk(
+        self,
+        state: "MyStreamingState",
+        incoming_chunk: ValidAgentInputMessage,
+    ) -> Tuple[AssistantMessage, "MyStreamingState"]:
+        # Process one tick: extract input, call API, build response
+        ...
+```
+
+### Step 4: Register the agent
+
+Add your agent to the global registry in `src/tau2/registry.py`:
+
+```python
+from tau2.agent.my_agent import MyAgent
+
+registry.register_agent(MyAgent, "my_agent")
+```
+
+The name you pass (e.g., `"my_agent"`) is what you will use on the CLI with `--agent`.
 
 ## Understanding the Environment
 
@@ -14,70 +239,10 @@ This will start a server and automatically open your browser to the API document
 - Understand the policy requirements and constraints
 - Test API calls directly through the documentation interface
 
-## Developing an Agent
-
-Implement the `HalfDuplexAgent` class for turn-based agents or `FullDuplexAgent` for streaming agents.
-
-Register your agent in `src/tau2/agent/registry.py`
-```python
-registry.register_agent(MyAgent, "my_agent")
-```
-
-## Available Agent Types
-
-### LLMAgent (Half-Duplex)
-The basic LLM-powered agent for turn-based communication:
-
-```python
-from tau2.agent import LLMAgent
-
-agent = LLMAgent(
-    tools=tools,
-    domain_policy=policy,
-    llm="gpt-4",
-    llm_args={"temperature": 0.7}
-)
-
-# Use in half-duplex mode
-message, state = agent.generate_next_message(user_msg, state)
-```
-
-### TextStreamingLLMAgent (Full-Duplex)
-Streaming agent with full-duplex capabilities:
-
-```python
-from tau2.agent import TextStreamingLLMAgent
-
-agent = TextStreamingLLMAgent(
-    tools=tools,
-    domain_policy=policy,
-    llm="gpt-4",
-    chunk_by="words",  # "chars", "words", or "sentences"
-    chunk_size=10      # Number of units per chunk
-)
-
-# FULL_DUPLEX mode (symmetric chunk-based streaming)
-state = agent.get_init_state()
-chunk, state = agent.get_next_chunk(state, incoming_chunk)
-```
-
-#### Customizing Turn-Taking Logic
-
-Override `_next_turn_taking_action()` to implement custom turn-taking:
-
-```python
-class MyStreamingAgent(TextStreamingLLMAgent):
-    def _next_turn_taking_action(self, state):
-        # Custom logic for deciding when to speak
-        return basic_turn_taking_policy(
-            state,
-            wait_to_respond_threshold_other=2,
-            wait_to_respond_threshold_self=4,
-        )
-```
-
 ## Testing Your Agent
-You can now use the command:
+
+Run an eval with your agent using the CLI:
+
 ```bash
 tau2 run \
   --domain <domain> \
@@ -87,10 +252,4 @@ tau2 run \
   ...
 ```
 
-## Communication Protocols
-
-### Half-Duplex (HalfDuplexAgent)
-Traditional turn-based communication where one party speaks while the other listens. Uses `generate_next_message()`.
-
-### Full-Duplex (FullDuplexAgent)
-Symmetric chunk-based streaming where both parties can send and receive chunks simultaneously, enabling truly interactive conversations with interruptions and overlapping speech. Uses `get_next_chunk()`.
+See `tau2 run --help` or `docs/cli-reference.md` for the full list of options.

@@ -1,0 +1,172 @@
+# AGENTS.md
+
+> Instructions for AI coding agents working on the τ²-bench codebase.
+
+## Project Overview
+
+τ²-bench is a simulation framework for evaluating conversational customer service agents. It supports text and voice interactions in half-duplex (turn-based) and full-duplex (simultaneous/streaming) communication modes. Domains include `mock`, `airline`, `retail`, and `telecom`.
+
+## Setup
+
+```bash
+python3.12 -m venv .venv
+source .venv/bin/activate
+pip install -e .
+tau2 check-data  # verify installation
+```
+
+Environment variables: copy `.env.example` to `.env` and set API keys. Uses [LiteLLM](https://github.com/BerriAI/litellm) for LLM provider abstraction.
+
+Required keys depend on the task:
+- `OPENAI_API_KEY` / `ANTHROPIC_API_KEY` — for LLM-based agents and user simulators
+- `ELEVENLABS_API_KEY` — voice synthesis
+- `DEEPGRAM_API_KEY` — voice transcription
+
+## Common Commands
+
+| Command | What it does |
+|---------|-------------|
+| `make test` | Run all tests (`pytest tests/`) |
+| `make lint` | Lint with ruff |
+| `make format` | Format with ruff |
+| `make lint-fix` | Lint and auto-fix |
+| `make check-all` | Run lint + format (same as pre-commit hook) |
+| `make clean` | Remove venv, caches, build artifacts |
+| `make env-cli` | Interactive environment CLI for testing domain tools |
+
+Always run `make check-all` before committing. A pre-commit hook enforces this.
+
+## Running Evaluations
+
+```bash
+# Text half-duplex (standard)
+tau2 run --domain airline --agent-llm gpt-4.1 --user-llm gpt-4.1 --num-trials 1 --num-tasks 5
+
+# Voice full-duplex (audio native)
+tau2 run --domain retail --audio-native --num-tasks 1 --verbose-logs
+```
+
+Results go to `data/simulations/`. Use `tau2 view` to browse them.
+
+## Architecture
+
+```
+src/tau2/
+├── agent/           # Agent implementations (half-duplex and full-duplex)
+├── api_service/     # FastAPI-based API service
+├── config.py        # Central configuration (single source of truth for defaults)
+├── cli.py           # CLI entry point (tau2 command)
+├── data_model/      # Pydantic data models (messages, trajectories, etc.)
+├── domains/         # Domain definitions (airline, mock, retail, telecom)
+├── environment/     # Environment, DB, server, toolkit base classes
+├── evaluator/       # Task evaluation logic
+├── gym/             # Gymnasium-compatible RL interface
+├── metrics/         # Metrics computation
+├── orchestrator/    # Simulation orchestrators (half-duplex, full-duplex)
+├── registry.py      # Global registry for agents, domains, tasks, users
+├── scripts/         # CLI command implementations
+├── user/            # User simulator implementations
+├── utils/           # Shared utilities
+└── voice/           # Voice synthesis, transcription, audio-native providers
+    └── audio_native/  # Real-time voice providers (openai, gemini, nova, xai, deepgram, qwen)
+```
+
+Other top-level directories:
+- `data/` — Domain data (JSON, TOML, policies), simulation outputs
+- `tests/` — All tests (pytest)
+- `scripts/` — Standalone utility scripts
+- `src/experiments/` — Research/experimental code (self-contained)
+- `docs/` — User-facing documentation
+
+## Key Patterns
+
+### Registry System
+
+All agents, domains, tasks, and user simulators are registered in `src/tau2/registry.py`. To add a new component, register it there:
+
+```python
+registry.register_agent(MyAgent, "my_agent")
+registry.register_domain(get_environment, "my_domain")
+registry.register_tasks(get_tasks, "my_domain", get_task_splits=get_tasks_split)
+```
+
+### Agent Architecture
+
+Two base classes, determined by communication mode:
+
+| Mode | Base class | Key method | Used by |
+|------|-----------|------------|---------|
+| Half-duplex (turn-based) | `HalfDuplexAgent` | `generate_next_message()` | `LLMAgent` |
+| Full-duplex (streaming) | `FullDuplexAgent` | `get_next_chunk()` | `DiscreteTimeAudioNativeAgent` |
+
+Both share the constructor signature: `__init__(self, tools: list[Tool], domain_policy: str)`.
+For LLM-based agents, mix in `LLMConfigMixin` to add `llm` and `llm_args` parameters.
+
+### Domain Structure
+
+Each domain (`src/tau2/domains/<name>/`) contains:
+- `data_model.py` — DB subclass with domain data models
+- `tools.py` — `ToolKitBase` subclass with domain tools
+- `environment.py` — `get_environment()`, `get_tasks()`, `get_tasks_split()`
+- `user_tools.py` (optional) — user-facing tools
+- `utils.py` — data paths and helpers
+
+Domain data lives in `data/tau2/domains/<name>/` (tasks.json, policy.md, db.json/toml, etc.).
+
+### Orchestrators
+
+- `Orchestrator` — half-duplex, turn-based, synchronous tool execution
+- `FullDuplexOrchestrator` — full-duplex, tick-based, simultaneous agent/user activity
+
+## Testing
+
+```bash
+# All tests
+make test
+
+# Domain-specific
+pytest tests/test_domains/test_<domain_name>
+
+# Specific test file
+pytest tests/test_agent.py
+
+# Skip full-duplex integration tests (require live APIs)
+pytest -m "not full_duplex_integration"
+```
+
+Test layout mirrors source:
+- `tests/test_domains/` — per-domain tool and user-tool tests
+- `tests/test_streaming/` — streaming/full-duplex tests
+- `tests/test_voice/` — audio-native provider tests (gated by `{PROVIDER}_TEST_ENABLED=1`)
+
+## Code Style
+
+- **Formatter/linter**: Ruff (configured in `pyproject.toml`)
+- **Line length**: 88 characters
+- **Python**: >=3.12, <3.14
+- **Type hints**: Encouraged, especially for public APIs
+- **Docstrings**: Required for public APIs and complex functions
+- **Import sorting**: Handled by ruff
+- **Models**: Use Pydantic `BaseModel` for data classes
+
+Ruff rules: `E4`, `E7`, `E9`, `F`, `I` (with `E501` and `F541` ignored).
+
+## Commit Conventions
+
+```
+feat: add memory system to agent base class
+fix: resolve environment tool timeout issues
+docs: update domain contribution guidelines
+test: add integration tests for retail domain
+```
+
+## Things to Watch Out For
+
+- **`.env` file**: Never commit this. Contains API keys. Use `.env.example` as reference.
+- **`data/` directory**: Contains domain data that the framework depends on. Be careful modifying JSON/TOML data files.
+- **`config.py`**: Single source of truth for default configuration values. Import constants from here rather than defining local duplicates.
+- **`registry.py`**: All new agents, domains, and user simulators must be registered here to be usable via CLI.
+- **Audio native providers**: Each has its own WebSocket protocol and event format. Always verify against provider documentation. See `.cursor/rules/audio-native-provider.md` for the full implementation guide.
+- **Task splits**: The `base` split is the default for evaluation. The `train`/`test` splits are for RL experiments.
+- **Pre-commit hook**: Runs `make check-all` (ruff lint + format). Fix any issues before committing.
+- **Notebooks**: Excluded from ruff (`*.ipynb` in pyproject.toml exclude).
