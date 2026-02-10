@@ -287,11 +287,16 @@ For other `src/experiments/` contributions (non-domain):
 - **Status clarity**: Clearly mark experimental status and limitations
 
 ### Agent Contributions
-When contributing new agent implementations:
-- **Interface compliance**: Follow the base agent interface
-- **Configuration**: Support standard configuration patterns
-- **Error handling**: Robust error handling and logging
-- **Documentation**: Clear usage examples and configuration options
+
+There are two types of agent contributions:
+
+#### Core Agents (`src/tau2/agent/`)
+Core agents are part of the official tau2 framework and are maintained by Sierra. Core agent contributions:
+- Require thorough review and approval
+- Must implement `HalfDuplexAgent` or `FullDuplexAgent`
+- Are registered in `src/tau2/registry.py`
+- See `src/tau2/agent/README.md` for the full developer guide
+
 
 ## 🤝 Getting Help
 

@@ -327,6 +327,17 @@ class GymAgent(HalfDuplexAgent):
         return not self._agent_turn_finished.is_set()
 
 
+def create_gym_agent(tools, domain_policy, **kwargs):
+    """Factory function for GymAgent.
+
+    Args:
+        tools: Environment tools the agent can call.
+        domain_policy: Policy text the agent must follow.
+        **kwargs: Additional arguments (unused by GymAgent).
+    """
+    return GymAgent(tools=tools, domain_policy=domain_policy)
+
+
 class GymUserState(BaseModel):
     """The state of the gym user containing the conversation history."""
 

@@ -23,7 +23,12 @@ from tau2.config import (
     DEFAULT_LLM_ARGS_USER,
     DEFAULT_LLM_USER,
 )
-from tau2.data_model.simulation import AudioNativeConfig, RunConfig
+from tau2.data_model.simulation import (
+    AudioNativeConfig,
+    RunConfig,
+    TextRunConfig,
+    VoiceRunConfig,
+)
 from tau2.data_model.tasks import EnvAssertion, Task, make_task
 from tau2.run import (
     EvaluationType,
@@ -67,22 +72,16 @@ def audio_native_config() -> AudioNativeConfig:
 
 
 @pytest.fixture
-def run_config_audio_native() -> RunConfig:
-    """Create a RunConfig with audio_native_config for testing."""
-    return RunConfig(
+def run_config_audio_native() -> VoiceRunConfig:
+    """Create a VoiceRunConfig for testing."""
+    return VoiceRunConfig(
         domain="mock",
-        agent="discrete_time_audio_native_agent",
-        user="voice_streaming_user_simulator",
         task_ids=["create_task_1"],
-        llm_agent="gpt-4o-mini",
-        llm_args_agent={},
         llm_user="gpt-4o-mini",
         llm_args_user={},
         num_trials=1,
-        max_steps=600,  # 120 seconds at 0.2s ticks
         max_errors=10,
         save_to=None,
-        llm_review=False,
         max_concurrency=1,
         audio_native_config=AudioNativeConfig(
             tick_duration_seconds=0.2,
@@ -133,60 +132,55 @@ def test_audio_native_config_derived_properties():
 # =============================================================================
 
 
-def test_run_config_with_audio_native_config():
-    """Test that RunConfig correctly uses audio_native_config."""
+def test_voice_run_config():
+    """Test that VoiceRunConfig correctly sets effective values."""
     audio_config = AudioNativeConfig()
-    run_config = RunConfig(
+    run_config = VoiceRunConfig(
         domain="mock",
-        agent="llm_agent",
-        user="user_simulator",
         audio_native_config=audio_config,
     )
 
     assert run_config.audio_native_config is not None
-    assert run_config.is_audio_native is True
-    assert run_config.get_effective_agent() == "discrete_time_audio_native_agent"
-    assert run_config.get_effective_user() == "voice_streaming_user_simulator"
+    assert run_config.is_voice is True
+    assert run_config.effective_agent == "discrete_time_audio_native_agent"
+    assert run_config.effective_user == "voice_streaming_user_simulator"
 
 
-def test_run_config_without_audio_native_config():
-    """Test that RunConfig correctly handles no audio_native_config."""
-    run_config = RunConfig(
+def test_text_run_config():
+    """Test that TextRunConfig correctly sets effective values."""
+    run_config = TextRunConfig(
         domain="mock",
         agent="llm_agent",
         user="user_simulator",
     )
 
-    assert run_config.audio_native_config is None
-    assert run_config.is_audio_native is False
-    assert run_config.get_effective_agent() == "llm_agent"
-    assert run_config.get_effective_user() == "user_simulator"
+    assert run_config.is_voice is False
+    assert run_config.effective_agent == "llm_agent"
+    assert run_config.effective_user == "user_simulator"
+    assert not isinstance(run_config, VoiceRunConfig)
 
 
 def test_run_config_effective_max_steps():
-    """Test that RunConfig correctly computes effective max steps."""
-    # Without audio-native config, use regular max_steps
-    run_config = RunConfig(
+    """Test that config types correctly compute effective max steps."""
+    # TextRunConfig uses regular max_steps
+    run_config = TextRunConfig(
         domain="mock",
         agent="llm_agent",
         user="user_simulator",
         max_steps=50,
     )
-    assert run_config.get_effective_max_steps() == 50
+    assert run_config.effective_max_steps == 50
 
-    # With audio-native config, use max_steps_ticks
+    # VoiceRunConfig uses max_steps_ticks from audio_native_config
     audio_config = AudioNativeConfig(
         tick_duration_seconds=0.2,
         max_steps_seconds=120,  # 120 / 0.2 = 600 ticks
     )
-    run_config_audio = RunConfig(
+    run_config_audio = VoiceRunConfig(
         domain="mock",
-        agent="llm_agent",
-        user="user_simulator",
-        max_steps=50,
         audio_native_config=audio_config,
     )
-    assert run_config_audio.get_effective_max_steps() == 600
+    assert run_config_audio.effective_max_steps == 600
 
 
 # =============================================================================

@@ -762,3 +762,47 @@ class DiscreteTimeAudioNativeAgent(FullDuplexAgent[DiscreteTimeAgentState]):
         if message.content is None:
             return False
         return cls.STOP_TOKEN in message.content
+
+
+# =============================================================================
+# AGENT FACTORY FUNCTION
+# =============================================================================
+
+
+def create_discrete_time_audio_native_agent(tools, domain_policy, **kwargs):
+    """Factory function for DiscreteTimeAudioNativeAgent.
+
+    Args:
+        tools: Environment tools the agent can call.
+        domain_policy: Policy text the agent must follow.
+        **kwargs: Additional arguments. Supports:
+            - audio_native_config: AudioNativeConfig with provider settings.
+              If provided, the following fields are extracted from it:
+              tick_duration_ms, send_audio_instant, buffer_until_complete,
+              fast_forward_mode, provider, model, use_xml_prompt.
+            - Individual overrides for any of the above fields.
+    """
+    audio_native_config = kwargs.get("audio_native_config")
+    if audio_native_config is not None:
+        return DiscreteTimeAudioNativeAgent(
+            tools=tools,
+            domain_policy=domain_policy,
+            tick_duration_ms=audio_native_config.tick_duration_ms,
+            modality="audio",
+            send_audio_instant=audio_native_config.send_audio_instant,
+            buffer_until_complete=audio_native_config.buffer_until_complete,
+            fast_forward_mode=audio_native_config.fast_forward_mode,
+            provider=audio_native_config.provider,
+            model=audio_native_config.model,
+            use_xml_prompt=audio_native_config.use_xml_prompt,
+        )
+    else:
+        # Fallback: use individual kwargs or defaults
+        return DiscreteTimeAudioNativeAgent(
+            tools=tools,
+            domain_policy=domain_policy,
+            tick_duration_ms=kwargs.get("tick_duration_ms", 1000),
+            modality=kwargs.get("modality", "audio"),
+            provider=kwargs.get("provider", DEFAULT_AUDIO_NATIVE_PROVIDER),
+            model=kwargs.get("model"),
+        )

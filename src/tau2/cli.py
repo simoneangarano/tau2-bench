@@ -36,7 +36,11 @@ from tau2.config import (
     DEFAULT_YIELD_THRESHOLD_WHEN_INTERRUPTING_SECONDS,
 )
 from tau2.data_model.persona import PersonaConfig
-from tau2.data_model.simulation import AudioNativeConfig, RunConfig
+from tau2.data_model.simulation import (
+    AudioNativeConfig,
+    TextRunConfig,
+    VoiceRunConfig,
+)
 from tau2.run import get_options, run_domain
 from tau2.scripts.leaderboard.verify_trajectories import VerificationMode
 
@@ -392,7 +396,7 @@ def main():
     def run_command(args):
         user_persona_config = None
         if args.user_persona:
-            user_persona_config = PersonaConfig.from_dict(args.user_persona)
+            user_persona_config = PersonaConfig.from_dict(args.user_persona)  # noqa: F841
 
         # Build audio-native config if enabled
         audio_native_config = None
@@ -439,39 +443,48 @@ def main():
 
         set_llm_log_mode(args.llm_log_mode)
 
-        return run_domain(
-            RunConfig(
-                domain=args.domain,
-                task_set_name=args.task_set_name,
-                task_split_name=args.task_split_name,
-                task_ids=args.task_ids,
-                num_tasks=args.num_tasks,
+        # Shared config kwargs
+        shared_kwargs = dict(
+            domain=args.domain,
+            task_set_name=args.task_set_name,
+            task_split_name=args.task_split_name,
+            task_ids=args.task_ids,
+            num_tasks=args.num_tasks,
+            llm_user=args.user_llm,
+            llm_args_user=args.user_llm_args,
+            num_trials=args.num_trials,
+            max_errors=args.max_errors,
+            save_to=args.save_to,
+            max_concurrency=args.max_concurrency,
+            seed=args.seed,
+            log_level=args.log_level,
+            verbose_logs=args.verbose_logs,
+            max_retries=args.max_retries,
+            retry_delay=args.retry_delay,
+            auto_resume=args.auto_resume,
+            auto_review=args.auto_review,
+            review_mode=args.review_mode,
+        )
+
+        if audio_native_config is not None:
+            config = VoiceRunConfig(
+                **shared_kwargs,
+                audio_native_config=audio_native_config,
+                speech_complexity=args.speech_complexity,
+                audio_debug=getattr(args, "audio_debug", False),
+            )
+        else:
+            config = TextRunConfig(
+                **shared_kwargs,
                 agent=args.agent,
                 llm_agent=args.agent_llm,
                 llm_args_agent=args.agent_llm_args,
                 user=args.user,
-                llm_user=args.user_llm,
-                llm_args_user=args.user_llm_args,
-                num_trials=args.num_trials,
                 max_steps=args.max_steps,
-                max_errors=args.max_errors,
-                save_to=args.save_to,
-                max_concurrency=args.max_concurrency,
-                seed=args.seed,
-                log_level=args.log_level,
-                user_persona_config=user_persona_config,
                 enforce_communication_protocol=args.enforce_communication_protocol,
-                speech_complexity=args.speech_complexity,
-                audio_native_config=audio_native_config,
-                verbose_logs=args.verbose_logs,
-                audio_debug=getattr(args, "audio_debug", False),
-                max_retries=args.max_retries,
-                retry_delay=args.retry_delay,
-                auto_resume=args.auto_resume,
-                auto_review=args.auto_review,
-                review_mode=args.review_mode,
             )
-        )
+
+        return run_domain(config)
 
     run_parser.set_defaults(func=run_command)
 

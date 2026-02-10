@@ -1,5 +1,7 @@
 # Agent Developer Guide
 
+> **Quick start:** See `examples/agents/` for runnable code you can copy and modify.
+
 ## Overview
 
 Agents are the system-under-test in tau2 evals. An agent interacts with a simulated user and uses environment tools (API endpoints) to resolve customer service tasks. The eval framework scores the agent on whether it takes the correct actions and follows domain policy.
@@ -214,14 +216,34 @@ class MyStreamingAgent(FullDuplexAgent["MyStreamingState"]):
         ...
 ```
 
-### Step 4: Register the agent
+### Step 4: Provide a factory function and register the agent
 
-Add your agent to the global registry in `src/tau2/registry.py`:
+Agents are integrated into the eval framework via **factory functions**. A factory encapsulates all construction logic, following the same pattern as domain factories (`get_environment()`). The factory signature is:
 
 ```python
-from tau2.agent.my_agent import MyAgent
+def create_agent(tools, domain_policy, **kwargs):
+    """
+    Factory function called by the eval framework.
 
-registry.register_agent(MyAgent, "my_agent")
+    Args:
+        tools: Environment tools (API endpoints) the agent can call.
+        domain_policy: Policy text the agent must follow.
+        **kwargs: Additional arguments from the CLI/config:
+            - llm (str): LLM model name (from --agent-llm)
+            - llm_args (dict): Additional LLM arguments
+            - task (Task): The current task being evaluated
+    """
+    return MyAgent(tools=tools, domain_policy=domain_policy, ...)
+```
+
+There are two ways to register an agent, depending on whether it is a core or community contribution.
+
+**Core agents** register a factory directly in `src/tau2/registry.py`:
+
+```python
+from tau2.agent.my_agent import create_my_agent
+
+registry.register_agent_factory(create_my_agent, "my_agent")
 ```
 
 The name you pass (e.g., `"my_agent"`) is what you will use on the CLI with `--agent`.

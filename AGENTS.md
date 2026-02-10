@@ -85,7 +85,7 @@ Other top-level directories:
 All agents, domains, tasks, and user simulators are registered in `src/tau2/registry.py`. To add a new component, register it there:
 
 ```python
-registry.register_agent(MyAgent, "my_agent")
+registry.register_agent_factory(create_my_agent, "my_agent")
 registry.register_domain(get_environment, "my_domain")
 registry.register_tasks(get_tasks, "my_domain", get_task_splits=get_tasks_split)
 ```

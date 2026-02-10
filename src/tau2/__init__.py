@@ -6,11 +6,22 @@ Main exports for easy access to key components.
 
 import warnings
 
+# Runner package: clean API for simulation execution
+# - Layer 1: run_simulation (execute pre-built orchestrator)
+# - Layer 2: build_* functions (construct instances from config/names)
+# - Layer 3: run_domain, run_tasks, run_single_task (batch execution)
+import tau2.runner as runner
 from tau2.agent.base.llm_config import LLMConfigMixin
 from tau2.agent.base_agent import FullDuplexAgent, HalfDuplexAgent
 from tau2.agent.llm_agent import LLMAgent, LLMSoloAgent
 from tau2.agent.llm_streaming_agent import TextStreamingLLMAgent
-from tau2.data_model.simulation import RunConfig, SimulationRun
+from tau2.data_model.simulation import (
+    BaseRunConfig,
+    RunConfig,
+    SimulationRun,
+    TextRunConfig,
+    VoiceRunConfig,
+)
 from tau2.data_model.tasks import Task
 from tau2.environment.environment import Environment
 from tau2.evaluator.evaluator import EvaluationType, evaluate_simulation
@@ -80,8 +91,12 @@ __all__ = [
     "Task",
     "evaluate_simulation",
     "EvaluationType",
+    "BaseRunConfig",
+    "TextRunConfig",
+    "VoiceRunConfig",
     "RunConfig",
     "run_domain",
+    "runner",
     # Streaming
     "CommunicationMode",
     "TextStreamingLLMAgent",

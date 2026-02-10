@@ -1,7 +1,7 @@
 from copy import deepcopy
 from enum import Enum
 from pathlib import Path
-from typing import Literal, Optional
+from typing import Literal, Optional, Union
 
 import pandas as pd
 from pydantic import BaseModel, Field
@@ -237,7 +237,13 @@ class AudioNativeConfig(BaseModel):
         return int(self.max_steps_seconds / self.tick_duration_seconds)
 
 
-class RunConfig(BaseModel):
+class BaseRunConfig(BaseModel):
+    """Base configuration shared by both text (half-duplex) and voice (full-duplex) modes.
+
+    Do not instantiate directly. Use TextRunConfig or VoiceRunConfig.
+    """
+
+    # ---- Domain and task selection ----
     domain: Annotated[
         str,
         Field(
@@ -273,67 +279,29 @@ class RunConfig(BaseModel):
             default=None,
         ),
     ]
-    is_remote: Annotated[
-        bool,
-        Field(
-            description="Whether to run the simulation remotely",
-            default=False,
-        ),
-    ]
-    agent: Annotated[
-        str,
-        Field(
-            description="The type of agent to run the simulation on",
-            default="llm_agent",
-        ),
-    ]
-    llm_agent: Annotated[
-        str,
-        Field(
-            description="The model to use for the agent",
-            default=DEFAULT_LLM_AGENT,
-        ),
-    ]
-    llm_args_agent: Annotated[
-        dict,
-        Field(
-            description="The arguments to pass to the LLM for the agent",
-            default_factory=lambda: deepcopy(DEFAULT_LLM_ARGS_AGENT),
-        ),
-    ]
-    user: Annotated[
-        str,
-        Field(
-            description="The type of user to run the simulation on",
-            default="user_simulator",
-        ),
-    ]
+
+    # ---- User simulator ----
     llm_user: Annotated[
         str,
         Field(
-            description="The model to use for the user",
+            description="The model to use for the user simulator",
             default=DEFAULT_LLM_USER,
         ),
     ]
     llm_args_user: Annotated[
         dict,
         Field(
-            description="The arguments to pass to the LLM for the user",
+            description="The arguments to pass to the LLM for the user simulator",
             default_factory=lambda: deepcopy(DEFAULT_LLM_ARGS_USER),
         ),
     ]
+
+    # ---- Execution parameters ----
     num_trials: Annotated[
         int,
         Field(
             description="The number of trials to run the simulation on",
             default=DEFAULT_NUM_TRIALS,
-        ),
-    ]
-    max_steps: Annotated[
-        int,
-        Field(
-            description="The maximum number of steps to run the simulation",
-            default=DEFAULT_MAX_STEPS,
         ),
     ]
     max_errors: Annotated[
@@ -371,48 +339,6 @@ class RunConfig(BaseModel):
             default=DEFAULT_LOG_LEVEL,
         ),
     ]
-    agent_voice_settings: Annotated[
-        Optional[VoiceSettings],
-        Field(
-            description="Voice synthesis and transcription settings",
-            default=None,
-        ),
-    ]
-    user_voice_settings: Annotated[
-        Optional[VoiceSettings],
-        Field(
-            description="Voice synthesis and transcription settings",
-            default=None,
-        ),
-    ]
-    enforce_communication_protocol: Annotated[
-        bool,
-        Field(
-            description="Whether to enforce communication protocol rules (e.g., no mixed messages with text and tool calls)",
-            default=False,
-        ),
-    ]
-    text_streaming_config: Annotated[
-        Optional[dict],
-        Field(
-            description="Text streaming configuration",
-            default=None,
-        ),
-    ]
-    speech_complexity: Annotated[
-        SpeechComplexity,
-        Field(
-            description="Speech environment complexity level: 'control' (clean speech, no effects), 'regular' (realistic with background noise and effects), plus ablation variants (control_audio, control_accents, control_behavior)",
-            default="regular",
-        ),
-    ]
-    audio_native_config: Annotated[
-        Optional[AudioNativeConfig],
-        Field(
-            description="Configuration for audio-native mode. If set, enables full-duplex voice using DiscreteTimeAudioNativeAgent and VoiceStreamingUserSimulator.",
-            default=None,
-        ),
-    ]
     verbose_logs: Annotated[
         bool,
         Field(
@@ -420,6 +346,8 @@ class RunConfig(BaseModel):
             default=False,
         ),
     ]
+
+    # ---- Retry ----
     max_retries: Annotated[
         int,
         Field(
@@ -434,6 +362,8 @@ class RunConfig(BaseModel):
             default=DEFAULT_RETRY_MIN_WAIT,
         ),
     ]
+
+    # ---- Resume and review ----
     auto_resume: Annotated[
         bool,
         Field(
@@ -456,62 +386,213 @@ class RunConfig(BaseModel):
         ),
     ]
 
-    def validate(self) -> None:
-        """
-        Validate the run config
-        """
-        pass
+    # ---- Misc ----
+    is_remote: Annotated[
+        bool,
+        Field(
+            description="Whether to run the simulation remotely",
+            default=False,
+        ),
+    ]
+
+    # ---- Abstract-ish properties (subclasses must override) ----
 
     @property
-    def is_audio_native(self) -> bool:
-        """Check if audio-native mode is enabled."""
-        return self.audio_native_config is not None
+    def effective_agent(self) -> str:
+        """The agent implementation name to use."""
+        raise NotImplementedError("Subclasses must implement effective_agent")
 
-    def get_effective_agent(self) -> str:
-        """Get the effective agent implementation to use."""
-        if self.is_audio_native:
-            return DEFAULT_AUDIO_NATIVE_AGENT_IMPLEMENTATION
+    @property
+    def effective_user(self) -> str:
+        """The user implementation name to use."""
+        raise NotImplementedError("Subclasses must implement effective_user")
+
+    @property
+    def effective_max_steps(self) -> int:
+        """Maximum simulation steps (turns for text, ticks for voice)."""
+        raise NotImplementedError("Subclasses must implement effective_max_steps")
+
+    @property
+    def effective_agent_model(self) -> str:
+        """The agent model identifier."""
+        raise NotImplementedError("Subclasses must implement effective_agent_model")
+
+    @property
+    def effective_agent_provider(self) -> Optional[str]:
+        """The agent provider (e.g., 'openai'). None for text mode."""
+        raise NotImplementedError("Subclasses must implement effective_agent_provider")
+
+    @property
+    def effective_user_model(self) -> str:
+        """The user model identifier. Always llm_user."""
+        return self.llm_user
+
+    @property
+    def is_voice(self) -> bool:
+        """Whether this is a voice (full-duplex) configuration."""
+        return isinstance(self, VoiceRunConfig)
+
+    def validate(self) -> None:
+        """Validate the run config."""
+        pass
+
+
+class TextRunConfig(BaseRunConfig):
+    """Configuration for half-duplex (text) simulations.
+
+    Text mode uses turn-based message exchange between an LLM agent and a
+    user simulator, with an Orchestrator managing the conversation.
+    """
+
+    # ---- Agent ----
+    agent: Annotated[
+        str,
+        Field(
+            description="The agent implementation to use (e.g., 'llm_agent', 'llm_agent_gt', 'llm_agent_solo')",
+            default="llm_agent",
+        ),
+    ]
+    llm_agent: Annotated[
+        str,
+        Field(
+            description="The model to use for the agent",
+            default=DEFAULT_LLM_AGENT,
+        ),
+    ]
+    llm_args_agent: Annotated[
+        dict,
+        Field(
+            description="The arguments to pass to the LLM for the agent",
+            default_factory=lambda: deepcopy(DEFAULT_LLM_ARGS_AGENT),
+        ),
+    ]
+
+    # ---- User ----
+    user: Annotated[
+        str,
+        Field(
+            description="The user implementation to use (e.g., 'user_simulator', 'dummy_user')",
+            default="user_simulator",
+        ),
+    ]
+
+    # ---- Text-specific ----
+    max_steps: Annotated[
+        int,
+        Field(
+            description="The maximum number of conversation turns",
+            default=DEFAULT_MAX_STEPS,
+        ),
+    ]
+    enforce_communication_protocol: Annotated[
+        bool,
+        Field(
+            description="Whether to enforce communication protocol rules (e.g., no mixed messages with text and tool calls)",
+            default=False,
+        ),
+    ]
+    text_streaming_config: Annotated[
+        Optional[dict],
+        Field(
+            description="Text streaming configuration",
+            default=None,
+        ),
+    ]
+
+    # ---- Properties ----
+
+    @property
+    def effective_agent(self) -> str:
         return self.agent
 
-    def get_effective_user(self) -> str:
-        """Get the effective user implementation to use."""
-        if self.is_audio_native:
-            return DEFAULT_AUDIO_NATIVE_USER_IMPLEMENTATION
+    @property
+    def effective_user(self) -> str:
         return self.user
 
-    def get_effective_max_steps(self) -> int:
-        """Get the effective max steps to use."""
-        if self.is_audio_native:
-            return self.audio_native_config.max_steps_ticks
+    @property
+    def effective_max_steps(self) -> int:
         return self.max_steps
 
-    def get_effective_agent_model(self) -> str:
-        """Get the effective agent model to use.
-
-        In audio-native mode, returns the model from audio_native_config.
-        Otherwise returns the llm_agent model.
-        """
-        if self.is_audio_native:
-            return self.audio_native_config.model
+    @property
+    def effective_agent_model(self) -> str:
         return self.llm_agent
 
-    def get_effective_agent_provider(self) -> Optional[str]:
-        """Get the agent provider (only relevant for audio-native mode).
-
-        Returns the provider (e.g., 'openai', 'gemini', 'xai') for audio-native mode,
-        or None for standard mode.
-        """
-        if self.is_audio_native:
-            return self.audio_native_config.provider
+    @property
+    def effective_agent_provider(self) -> Optional[str]:
         return None
 
-    def get_effective_user_model(self) -> str:
-        """Get the effective user model to use.
 
-        Always returns llm_user since the user simulator uses its own model
-        regardless of audio-native mode.
-        """
-        return self.llm_user
+class VoiceRunConfig(BaseRunConfig):
+    """Configuration for full-duplex (voice/audio-native) simulations.
+
+    Voice mode uses real-time audio exchange between a discrete-time audio-native
+    agent and a voice streaming user simulator, with a FullDuplexOrchestrator
+    managing the tick-based simulation.
+    """
+
+    # ---- Audio-native config (required) ----
+    audio_native_config: Annotated[
+        AudioNativeConfig,
+        Field(
+            description="Configuration for audio-native mode (provider, model, timing, thresholds, etc.).",
+        ),
+    ]
+
+    # ---- Voice-specific ----
+    speech_complexity: Annotated[
+        SpeechComplexity,
+        Field(
+            description="Speech environment complexity level: 'control' (clean speech, no effects), 'regular' (realistic with background noise and effects), plus ablation variants",
+            default="regular",
+        ),
+    ]
+    agent_voice_settings: Annotated[
+        Optional[VoiceSettings],
+        Field(
+            description="Voice synthesis and transcription settings for the agent",
+            default=None,
+        ),
+    ]
+    user_voice_settings: Annotated[
+        Optional[VoiceSettings],
+        Field(
+            description="Voice synthesis and transcription settings for the user",
+            default=None,
+        ),
+    ]
+    audio_debug: Annotated[
+        bool,
+        Field(
+            description="Enable audio debugging: saves per-tick audio files and analysis report.",
+            default=False,
+        ),
+    ]
+
+    # ---- Properties ----
+
+    @property
+    def effective_agent(self) -> str:
+        return DEFAULT_AUDIO_NATIVE_AGENT_IMPLEMENTATION
+
+    @property
+    def effective_user(self) -> str:
+        return DEFAULT_AUDIO_NATIVE_USER_IMPLEMENTATION
+
+    @property
+    def effective_max_steps(self) -> int:
+        return self.audio_native_config.max_steps_ticks
+
+    @property
+    def effective_agent_model(self) -> str:
+        return self.audio_native_config.model
+
+    @property
+    def effective_agent_provider(self) -> Optional[str]:
+        return self.audio_native_config.provider
+
+
+# Type alias for backward compatibility: accepts either text or voice config
+RunConfig = Union[TextRunConfig, VoiceRunConfig]
 
 
 class NLAssertionCheck(BaseModel):

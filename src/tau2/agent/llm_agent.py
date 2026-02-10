@@ -479,3 +479,66 @@ class LLMSoloAgent(
         message = self._check_if_stop_toolcall(assistant_message)
         state.messages.append(assistant_message)
         return assistant_message, state
+
+
+# =============================================================================
+# AGENT FACTORY FUNCTIONS
+# =============================================================================
+
+
+def create_llm_agent(tools, domain_policy, **kwargs):
+    """Factory function for LLMAgent.
+
+    Args:
+        tools: Environment tools the agent can call.
+        domain_policy: Policy text the agent must follow.
+        **kwargs: Additional arguments. Supports:
+            - llm (str): LLM model name.
+            - llm_args (dict): Additional LLM arguments.
+    """
+    return LLMAgent(
+        tools=tools,
+        domain_policy=domain_policy,
+        llm=kwargs.get("llm"),
+        llm_args=kwargs.get("llm_args"),
+    )
+
+
+def create_llm_gt_agent(tools, domain_policy, **kwargs):
+    """Factory function for LLMGTAgent.
+
+    Args:
+        tools: Environment tools the agent can call.
+        domain_policy: Policy text the agent must follow.
+        **kwargs: Additional arguments. Supports:
+            - llm (str): LLM model name.
+            - llm_args (dict): Additional LLM arguments.
+            - task (Task): The task to solve (required for GT agent).
+    """
+    return LLMGTAgent(
+        tools=tools,
+        domain_policy=domain_policy,
+        llm=kwargs.get("llm"),
+        llm_args=kwargs.get("llm_args"),
+        task=kwargs.get("task"),
+    )
+
+
+def create_llm_solo_agent(tools, domain_policy, **kwargs):
+    """Factory function for LLMSoloAgent.
+
+    Args:
+        tools: Environment tools the agent can call.
+        domain_policy: Policy text the agent must follow.
+        **kwargs: Additional arguments. Supports:
+            - llm (str): LLM model name.
+            - llm_args (dict): Additional LLM arguments.
+            - task (Task): The task to solve (required for solo agent).
+    """
+    return LLMSoloAgent(
+        tools=tools,
+        domain_policy=domain_policy,
+        llm=kwargs.get("llm"),
+        llm_args=kwargs.get("llm_args"),
+        task=kwargs.get("task"),
+    )

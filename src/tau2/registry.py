@@ -6,9 +6,16 @@ from typing import Callable, Dict, Optional
 from loguru import logger
 from pydantic import BaseModel
 
-from tau2.agent.base_agent import FullDuplexAgent, HalfDuplexAgent
-from tau2.agent.discrete_time_audio_native_agent import DiscreteTimeAudioNativeAgent
-from tau2.agent.llm_agent import LLMAgent, LLMGTAgent, LLMSoloAgent
+from tau2.agent.discrete_time_audio_native_agent import (
+    create_discrete_time_audio_native_agent,
+)
+from tau2.agent.llm_agent import (
+    LLMGTAgent,
+    LLMSoloAgent,
+    create_llm_agent,
+    create_llm_gt_agent,
+    create_llm_solo_agent,
+)
 from tau2.data_model.tasks import Task
 from tau2.domains.airline.environment import (
     get_environment as airline_domain_get_environment,
@@ -62,7 +69,11 @@ class Registry:
 
     def __init__(self):
         self._users: Dict[str, type] = {}  # HalfDuplexUser or FullDuplexUser
-        self._agents: Dict[str, type] = {}  # HalfDuplexAgent or FullDuplexAgent
+        self._agent_factories: Dict[str, Callable] = {}  # Factory functions for agents
+        self._agent_task_filters: Dict[
+            str, Callable[[Task], bool]
+        ] = {}  # Optional task filters per agent
+        self._agent_metadata: Dict[str, dict] = {}  # Optional metadata per agent
         self._domains: Dict[str, Callable[[], Environment]] = {}
         self._tasks: Dict[str, Callable[[Optional[str]], list[Task]]] = {}
         self._task_splits: Dict[str, Callable[[], dict[str, list[str]]]] = {}
@@ -89,23 +100,76 @@ class Registry:
             logger.error(f"Error registering user {name}: {str(e)}")
             raise
 
-    def register_agent(
+    def register_agent_factory(
         self,
-        agent_constructor: type,
-        name: Optional[str] = None,
+        factory: Callable,
+        name: str,
+        task_filter: Optional[Callable[[Task], bool]] = None,
+        metadata: Optional[dict] = None,
     ):
-        """Decorator to register a new Agent implementation (half-duplex or full-duplex)"""
-        if not (
-            issubclass(agent_constructor, HalfDuplexAgent)
-            or issubclass(agent_constructor, FullDuplexAgent)
-        ):
-            raise TypeError(
-                f"{agent_constructor.__name__} must implement HalfDuplexAgent or FullDuplexAgent"
-            )
-        key = name or agent_constructor.__name__
-        if key in self._agents:
-            raise ValueError(f"Agent {key} already registered")
-        self._agents[key] = agent_constructor
+        """Register an agent factory function.
+
+        A factory function encapsulates agent construction logic, following
+        the same pattern as domain factories (get_environment). The factory
+        signature is: factory(tools, domain_policy, **kwargs) -> agent instance.
+
+        Args:
+            factory: A callable that creates an agent instance.
+            name: The name to register the factory under.
+            task_filter: Optional callable that takes a Task and returns True if
+                the task is valid for this agent. Used by batch runners to filter
+                tasks before building agents. If None, all tasks are accepted.
+            metadata: Optional dict of agent metadata (e.g., {"solo_mode": True}).
+                Retrieved via get_agent_metadata().
+        """
+        if name in self._agent_factories:
+            raise ValueError(f"Agent factory {name} already registered")
+        self._agent_factories[name] = factory
+        if task_filter is not None:
+            self._agent_task_filters[name] = task_filter
+        if metadata is not None:
+            self._agent_metadata[name] = metadata
+
+    def get_agent_factory(self, name: str) -> Optional[Callable]:
+        """Get a registered agent factory by name.
+
+        Returns None if no factory is registered for the given name.
+
+        Args:
+            name: The name of the agent factory.
+
+        Returns:
+            The factory callable, or None if not found.
+        """
+        return self._agent_factories.get(name)
+
+    def get_agent_task_filter(self, name: str) -> Optional[Callable[[Task], bool]]:
+        """Get the task filter for a registered agent.
+
+        Returns None if no task filter is registered for the given agent,
+        meaning all tasks are accepted.
+
+        Args:
+            name: The name of the agent.
+
+        Returns:
+            A callable that takes a Task and returns True if valid, or None.
+        """
+        return self._agent_task_filters.get(name)
+
+    def get_agent_metadata(self, name: str, key: str, default=None):
+        """Get a metadata value for a registered agent.
+
+        Args:
+            name: The name of the agent.
+            key: The metadata key to look up.
+            default: Value to return if the key is not found.
+
+        Returns:
+            The metadata value, or default if not found.
+        """
+        agent_meta = self._agent_metadata.get(name, {})
+        return agent_meta.get(key, default)
 
     def register_domain(
         self,
@@ -149,12 +213,6 @@ class Registry:
             raise KeyError(f"User {name} not found in registry")
         return self._users[name]
 
-    def get_agent_constructor(self, name: str) -> type:
-        """Get a registered Agent implementation by name (half-duplex or full-duplex)"""
-        if name not in self._agents:
-            raise KeyError(f"Agent {name} not found in registry")
-        return self._agents[name]
-
     def get_env_constructor(self, name: str) -> Callable[[], Environment]:
         """Get a registered Domain by name"""
         if name not in self._domains:
@@ -187,7 +245,7 @@ class Registry:
 
     def get_agents(self) -> list[str]:
         """Get all registered Agents"""
-        return list(self._agents.keys())
+        return list(self._agent_factories.keys())
 
     def get_domains(self) -> list[str]:
         """Get all registered Domains"""
@@ -225,12 +283,22 @@ try:
         VoiceStreamingUserSimulator, "voice_streaming_user_simulator"
     )
 
-    # Agent implementations
-    registry.register_agent(LLMAgent, "llm_agent")
-    registry.register_agent(LLMGTAgent, "llm_agent_gt")
-    registry.register_agent(LLMSoloAgent, "llm_agent_solo")
-    registry.register_agent(
-        DiscreteTimeAudioNativeAgent, "discrete_time_audio_native_agent"
+    # Agent factories
+    registry.register_agent_factory(create_llm_agent, "llm_agent")
+    registry.register_agent_factory(
+        create_llm_gt_agent,
+        "llm_agent_gt",
+        task_filter=LLMGTAgent.check_valid_task,
+    )
+    registry.register_agent_factory(
+        create_llm_solo_agent,
+        "llm_agent_solo",
+        task_filter=LLMSoloAgent.check_valid_task,
+        metadata={"solo_mode": True},
+    )
+    registry.register_agent_factory(
+        create_discrete_time_audio_native_agent,
+        "discrete_time_audio_native_agent",
     )
     registry.register_domain(mock_domain_get_environment, "mock")
     registry.register_tasks(mock_domain_get_tasks, "mock")

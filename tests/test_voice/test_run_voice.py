@@ -8,7 +8,7 @@ from tau2.config import (
     DEFAULT_LLM_ARGS_USER,
     DEFAULT_LLM_USER,
 )
-from tau2.data_model.simulation import RunConfig
+from tau2.data_model.simulation import TextRunConfig
 from tau2.data_model.tasks import Task, make_task
 from tau2.data_model.voice import VoiceSettings
 from tau2.run import EvaluationType, run_task, run_tasks
@@ -35,9 +35,13 @@ def synthesis_voice_settings() -> VoiceSettings:
 @pytest.fixture
 def run_config_voice(
     transcription_voice_settings: VoiceSettings, synthesis_voice_settings: VoiceSettings
-) -> RunConfig:
-    """Test that we can get available options from the registry"""
-    return RunConfig(
+) -> TextRunConfig:
+    """Test config for voice-related tests (text agent with voice settings).
+
+    Note: These tests are currently skipped. Voice settings are not part of
+    TextRunConfig; full voice simulations should use VoiceRunConfig instead.
+    """
+    return TextRunConfig(
         domain="mock",
         agent="llm_agent",
         user="user_simulator",
@@ -50,10 +54,7 @@ def run_config_voice(
         max_steps=20,
         max_errors=10,
         save_to=None,
-        llm_review=False,
         max_concurrency=3,
-        agent_voice_settings=transcription_voice_settings,
-        user_voice_settings=synthesis_voice_settings,
     )
 
 

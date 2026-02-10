@@ -15,8 +15,6 @@ from typing import Optional
 
 from loguru import logger
 
-from tau2.agent.discrete_time_audio_native_agent import DiscreteTimeAudioNativeAgent
-from tau2.agent.llm_agent import LLMAgent, LLMGTAgent, LLMSoloAgent
 from tau2.data_model.persona import InterruptTendency, PersonaConfig, Verbosity
 from tau2.data_model.simulation import (
     AgentInfo,
@@ -27,12 +25,12 @@ from tau2.data_model.simulation import (
     SimulationRun,
     TerminationReason,
     UserInfo,
+    VoiceRunConfig,
 )
 from tau2.data_model.tasks import Task
 from tau2.data_model.voice import SpeechEnvironment, SynthesisConfig, VoiceSettings
 from tau2.environment.environment import EnvironmentInfo
 from tau2.evaluator.evaluator import EvaluationType, evaluate_simulation
-from tau2.gym.gym_agent import GymAgent
 from tau2.metrics.agent_metrics import compute_metrics
 from tau2.orchestrator.full_duplex_orchestrator import FullDuplexOrchestrator
 from tau2.orchestrator.modes import CommunicationMode
@@ -297,29 +295,27 @@ def make_run_name(config: RunConfig) -> str:
     """
     Make a run name from the run config
     """
-    # Use effective agent/user for audio-native mode
-    effective_agent = config.get_effective_agent()
-    effective_user = config.get_effective_user()
+    is_voice = isinstance(config, VoiceRunConfig)
 
-    # For audio-native mode, use the audio-native model name instead of llm_agent
-    if config.is_audio_native:
+    # For voice mode, use the audio-native model name instead of llm_agent
+    if is_voice:
         llm_agent_name = (
             f"{config.audio_native_config.provider}-{config.audio_native_config.model}"
         )
     else:
         llm_agent_name = config.llm_agent
     clean_llm_agent_name = [x for x in llm_agent_name.split("/") if x][-1]
-    agent_name = f"{effective_agent}_{clean_llm_agent_name}"
+    agent_name = f"{config.effective_agent}_{clean_llm_agent_name}"
 
     clean_llm_user_name = [x for x in config.llm_user.split("/") if x][-1]
-    user_name = f"{effective_user}_{clean_llm_user_name}"
+    user_name = f"{config.effective_user}_{clean_llm_user_name}"
 
     name = (
         f"{get_now(use_compact_format=True)}_{config.domain}_{agent_name}_{user_name}"
     )
 
     # Add audio-native suffix if enabled
-    if config.is_audio_native:
+    if is_voice:
         name = f"{name}_audio_native"
 
     return name
@@ -342,29 +338,23 @@ def run_domain(config: RunConfig) -> Results:
         num_tasks=config.num_tasks,
     )
 
-    # Get effective agent/user (handles audio-native mode)
-    effective_agent = config.get_effective_agent()
-    effective_user = config.get_effective_user()
-    effective_max_steps = config.get_effective_max_steps()
+    # Get effective agent/user from config properties
+    effective_agent = config.effective_agent
+    effective_user = config.effective_user
+    effective_max_steps = config.effective_max_steps
 
-    if "gt" in effective_agent:  # TODO: Clean up!
+    # Filter tasks based on agent's registered task filter (if any)
+    task_filter = registry.get_agent_task_filter(effective_agent)
+    if task_filter is not None:
         total_num_tasks = len(tasks)
-        tasks = [task for task in tasks if LLMGTAgent.check_valid_task(task)]
+        tasks = [task for task in tasks if task_filter(task)]
         num_tasks = len(tasks)
         console_text = Text(
-            text=f"Running {num_tasks} out of {total_num_tasks} tasks for GT agent.",
+            text=f"Running {num_tasks} out of {total_num_tasks} tasks for {effective_agent} (filtered).",
             style="bold green",
         )
         ConsoleDisplay.console.print(console_text)
-    if "solo" in effective_agent:  # TODO: Clean up!
-        total_num_tasks = len(tasks)
-        tasks = [task for task in tasks if LLMSoloAgent.check_valid_task(task)]
-        num_tasks = len(tasks)
-        console_text = Text(
-            text=f"Running {num_tasks} out of {total_num_tasks} tasks for solo agent.",
-            style="bold green",
-        )
-        ConsoleDisplay.console.print(console_text)
+    solo_mode = registry.get_agent_metadata(effective_agent, "solo_mode", default=False)
 
     num_trials = config.num_trials
     run_name = config.save_to
@@ -372,13 +362,14 @@ def run_domain(config: RunConfig) -> Results:
         run_name = make_run_name(config)
     save_dir = DATA_DIR / "simulations" / run_name
     save_path = save_dir / "results.json"
+    is_voice = isinstance(config, VoiceRunConfig)
     simulation_results = run_tasks(
         domain=config.domain,
         tasks=tasks,
         agent=effective_agent,
         user=effective_user,
-        llm_agent=config.llm_agent,
-        llm_args_agent=config.llm_args_agent,
+        llm_agent=config.llm_agent if not is_voice else "",
+        llm_args_agent=config.llm_args_agent if not is_voice else {},
         llm_user=config.llm_user,
         llm_args_user=config.llm_args_user,
         num_trials=num_trials,
@@ -391,15 +382,18 @@ def run_domain(config: RunConfig) -> Results:
         max_concurrency=config.max_concurrency,
         seed=config.seed,
         log_level=config.log_level,
-        enforce_communication_protocol=config.enforce_communication_protocol,
-        speech_complexity=config.speech_complexity,
-        audio_native_config=config.audio_native_config,
+        enforce_communication_protocol=config.enforce_communication_protocol
+        if not is_voice
+        else False,
+        speech_complexity=config.speech_complexity if is_voice else "regular",
+        audio_native_config=config.audio_native_config if is_voice else None,
         verbose_logs=config.verbose_logs,
         max_retries=config.max_retries,
         retry_delay=config.retry_delay,
         auto_resume=config.auto_resume,
         auto_review=config.auto_review,
         review_mode=config.review_mode,
+        solo_mode=solo_mode,
     )
     metrics = compute_metrics(simulation_results)
     ConsoleDisplay.display_agent_metrics(metrics)
@@ -436,6 +430,7 @@ def run_tasks(
     auto_resume: bool = False,
     auto_review: bool = False,
     review_mode: str = "full",
+    solo_mode: bool = False,
 ) -> Results:
     """
     Runs tasks for a given domain.
@@ -751,6 +746,7 @@ def run_tasks(
                     audio_debug=audio_debug,
                     auto_review=auto_review,
                     review_mode=review_mode,
+                    solo_mode=solo_mode,
                 )
                 simulation.trial = trial
                 if console_display:
@@ -923,6 +919,7 @@ def run_task(
     audio_debug: bool = False,
     auto_review: bool = False,
     review_mode: str = "full",
+    solo_mode: bool = False,
 ) -> SimulationRun:
     """
     Runs a single task simulation.
@@ -950,6 +947,8 @@ def run_task(
         verbose_logs: Enable verbose logging (per-task logs, ticks, etc.).
         audio_debug: Enable audio debugging. Saves per-tick audio files and analysis
             report for diagnosing timing issues. Only works for audio-native mode.
+        solo_mode: If True, the agent runs without a user simulator. The environment
+            is rebuilt with solo_mode=True and user tools are merged into agent tools.
 
     Returns:
         The simulation run.
@@ -1010,14 +1009,16 @@ def run_task(
         set_llm_log_dir(llm_log_dir)
         # LLM log mode is set globally via context variable before run starts
 
+    # If solo_mode, rebuild environment and merge user tools into agent tools
+    if solo_mode:
+        environment = environment_constructor(solo_mode=True)
+
     try:
         user_tools = environment.get_user_tools()
     except Exception:
         user_tools = None
 
-    solo_mode = False
-
-    # Handle audio-native mode (full-duplex voice with DiscreteTimeAudioNativeAgent)
+    # Handle audio-native mode (full-duplex voice)
     if audio_native_config is not None:
         # Use provided voice settings or create defaults
         if user_voice_settings is not None:
@@ -1060,19 +1061,19 @@ def run_task(
         if user_persona_config is None:
             user_persona_config = sampled_voice_config.persona_config
 
-        # Create DiscreteTimeAudioNativeAgent
-        agent_instance = DiscreteTimeAudioNativeAgent(
-            tools=environment.get_tools(),
-            domain_policy=environment.get_policy(),
-            tick_duration_ms=audio_native_config.tick_duration_ms,
-            modality="audio",
-            send_audio_instant=audio_native_config.send_audio_instant,
-            buffer_until_complete=audio_native_config.buffer_until_complete,
-            fast_forward_mode=audio_native_config.fast_forward_mode,
-            provider=audio_native_config.provider,
-            model=audio_native_config.model,
-            use_xml_prompt=audio_native_config.use_xml_prompt,
-        )
+        # Create voice agent via factory
+        agent_factory = registry.get_agent_factory(agent)
+        if agent_factory is not None:
+            agent_instance = agent_factory(
+                tools=environment.get_tools(),
+                domain_policy=environment.get_policy(),
+                audio_native_config=audio_native_config,
+            )
+        else:
+            raise ValueError(
+                f"Agent '{agent}' has no factory registered. "
+                f"Register a factory with registry.register_agent_factory()."
+            )
 
         # Create VoiceStreamingUserSimulator
         user_instance = VoiceStreamingUserSimulator(
@@ -1119,51 +1120,32 @@ def run_task(
         )
     else:
         # Standard half-duplex mode
-        AgentConstructor = registry.get_agent_constructor(agent)
         UserConstructor = registry.get_user_constructor(user)
 
-        # Create agent based on type
-        if issubclass(AgentConstructor, LLMAgent):
-            agent_instance = AgentConstructor(
-                tools=environment.get_tools(),
-                domain_policy=environment.get_policy(),
-                llm=llm_agent,
-                llm_args=llm_args_agent,
-            )
-        elif issubclass(AgentConstructor, LLMGTAgent):
-            agent_instance = AgentConstructor(
-                tools=environment.get_tools(),
-                domain_policy=environment.get_policy(),
-                llm=llm_agent,
-                llm_args=llm_args_agent,
-                task=task,
-            )
-        elif issubclass(AgentConstructor, LLMSoloAgent):
-            solo_mode = True
-            environment = environment_constructor(solo_mode=True)
-            user_tools = environment.get_user_tools() if environment.user_tools else []
-            agent_instance = AgentConstructor(
-                tools=environment.get_tools() + user_tools,
-                domain_policy=environment.get_policy(),
-                llm=llm_agent,
-                llm_args=llm_args_agent,
-                task=task,
-            )
-        elif issubclass(AgentConstructor, GymAgent):
-            agent_instance = AgentConstructor(
-                tools=environment.get_tools(),
-                domain_policy=environment.get_policy(),
-            )
-        else:
+        # Create agent via factory
+        agent_factory = registry.get_agent_factory(agent)
+        if agent_factory is None:
             raise ValueError(
-                f"Unknown agent type: {AgentConstructor}. Should be LLMAgent, LLMGTAgent, LLMSoloAgent, or GymAgent"
+                f"Agent '{agent}' has no factory registered. "
+                f"Register a factory with registry.register_agent_factory()."
             )
+
+        # In solo mode, agent gets both its own tools and user tools
+        agent_tools = environment.get_tools()
+        if solo_mode and user_tools:
+            agent_tools = agent_tools + user_tools
+
+        agent_instance = agent_factory(
+            tools=agent_tools,
+            domain_policy=environment.get_policy(),
+            llm=llm_agent,
+            llm_args=llm_args_agent,
+            task=task,
+        )
 
         # Create user based on type
         if issubclass(UserConstructor, DummyUser):
-            assert isinstance(agent_instance, LLMSoloAgent), (
-                "Dummy user can only be used with solo agent"
-            )
+            assert solo_mode, "Dummy user can only be used with solo agent"
 
         user_kwargs = {
             "tools": user_tools,

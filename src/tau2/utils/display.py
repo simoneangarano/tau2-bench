@@ -17,7 +17,13 @@ from tau2.data_model.message import (
     ToolMessage,
     UserMessage,
 )
-from tau2.data_model.simulation import Review, RunConfig, SimulationRun, UserOnlyReview
+from tau2.data_model.simulation import (
+    Review,
+    RunConfig,
+    SimulationRun,
+    UserOnlyReview,
+    VoiceRunConfig,
+)
 from tau2.data_model.tasks import Action, Task
 from tau2.metrics.agent_metrics import AgentMetrics, is_successful
 
@@ -254,13 +260,13 @@ class ConsoleDisplay:
     def display_run_config(cls, config: RunConfig):
         c = cls.colors
 
-        # Use effective values (handles audio-native mode)
-        effective_max_steps = config.get_effective_max_steps()
-        effective_agent = config.get_effective_agent()
-        effective_user = config.get_effective_user()
-        effective_agent_model = config.get_effective_agent_model()
-        effective_agent_provider = config.get_effective_agent_provider()
-        effective_user_model = config.get_effective_user_model()
+        # Use effective values from config properties
+        effective_max_steps = config.effective_max_steps
+        effective_agent = config.effective_agent
+        effective_user = config.effective_user
+        effective_agent_model = config.effective_agent_model
+        effective_agent_provider = config.effective_agent_provider
+        effective_user_model = config.effective_user_model
 
         # Build agent model string
         if effective_agent_provider:
@@ -297,7 +303,7 @@ class ConsoleDisplay:
         cls.console.print(header_content)
 
         # Build audio-native config panel if applicable
-        if config.audio_native_config:
+        if isinstance(config, VoiceRunConfig):
             anc = config.audio_native_config
             bc_min = (
                 f"{anc.backchannel_min_threshold_seconds}s"
