@@ -25,7 +25,7 @@ Python MRO determines which `__init__` runs. Follow this exact order:
 class MyAgent(
     LLMConfigMixin,           # 1. Config mixins first
     VoiceMixin,               # 2. Capability mixins second
-    TextChunkingMixin,        # 2. (continued)
+    AudioChunkingMixin,       # 2. (continued)
     FullDuplexAgent[StateType] # 3. Protocol base class last
 ):
 ```

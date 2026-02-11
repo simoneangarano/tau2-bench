@@ -51,8 +51,8 @@ trajectory: list[Message]  # Flat list of messages
 
 | Role | Classes |
 |------|---------|
-| Agent | `LLMAgent`, `LLMGTAgent`, `LLMSoloAgent`, `VoiceLLMAgent` |
-| User | `UserSimulator`, `VoiceUserSimulator`, `DummyUser` |
+| Agent | `LLMAgent`, `LLMGTAgent`, `LLMSoloAgent` |
+| User | `UserSimulator`, `DummyUser` |
 
 ### Usage
 
@@ -128,8 +128,8 @@ class Tick(BaseModel):
 
 | Role | Classes |
 |------|---------|
-| Agent | `TextStreamingLLMAgent`, `VoiceStreamingLLMAgent`, `DiscreteTimeAudioNativeAgent` |
-| User | `TextStreamingUserSimulator`, `VoiceStreamingUserSimulator` |
+| Agent | `DiscreteTimeAudioNativeAgent` |
+| User | `VoiceStreamingUserSimulator` |
 
 ### Usage
 
@@ -138,8 +138,8 @@ from tau2.orchestrator.full_duplex_orchestrator import FullDuplexOrchestrator
 
 orchestrator = FullDuplexOrchestrator(
     domain="airline",
-    agent=TextStreamingLLMAgent(tools, policy, llm="gpt-4", chunk_by="words", chunk_size=5),
-    user=TextStreamingUserSimulator(instructions, llm="gpt-4", chunk_by="words", chunk_size=5),
+    agent=DiscreteTimeAudioNativeAgent(tools, policy, audio_native_config=config),
+    user=VoiceStreamingUserSimulator(instructions, llm="gpt-4", ...),
     environment=environment,
     task=task,
     tick_duration_seconds=0.1,  # Optional: real-time pacing
@@ -173,7 +173,7 @@ while not orchestrator.done:
 
 ### From `Orchestrator` to `FullDuplexOrchestrator`
 
-1. Replace `LLMAgent` with `TextStreamingLLMAgent`
-2. Replace `UserSimulator` with `TextStreamingUserSimulator`
-3. Add chunking parameters (`chunk_by`, `chunk_size`)
+1. Replace `LLMAgent` with `DiscreteTimeAudioNativeAgent`
+2. Replace `UserSimulator` with `VoiceStreamingUserSimulator`
+3. Configure `AudioNativeConfig` with provider, tick duration, etc.
 

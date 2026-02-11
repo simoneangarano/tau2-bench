@@ -19,7 +19,7 @@ This directory contains the foundational building blocks for creating conversati
 | File | Purpose |
 |------|---------|
 | `participant.py` | Protocol base classes (`HalfDuplexParticipant`, `FullDuplexParticipant`) |
-| `streaming.py` | Streaming state and mixins (`StreamingMixin`, `TextChunkingMixin`, `AudioChunkingMixin`) |
+| `streaming.py` | Streaming state and mixins (`StreamingMixin`, `AudioChunkingMixin`) |
 | `voice.py` | Voice state and mixin (`VoiceMixin`) |
 | `llm_config.py` | Shared LLM configuration (`LLMConfigMixin`) |
 
@@ -165,21 +165,6 @@ def _create_chunk_messages(self, full_message: OutputMessageType) -> list[Output
 
 ---
 
-### `TextChunkingMixin[InputMessageType, OutputMessageType, StateType]`
-
-Extends `StreamingMixin` with text-based chunking.
-
-**Chunking Strategies:**
-- `chunk_by="chars"` → Split by character count
-- `chunk_by="words"` → Split by word boundaries
-- `chunk_by="sentences"` → Split by sentence boundaries
-
-```python
-def __init__(self, *args, chunk_by: str = "chars", chunk_size: int = 50, **kwargs)
-```
-
----
-
 ### `AudioChunkingMixin[InputMessageType, OutputMessageType, StateType]`
 
 Extends `StreamingMixin` with audio-based chunking.
@@ -280,7 +265,7 @@ When combining mixins, follow this order (Python MRO):
 
 ```
 1. Config mixins (LLMConfigMixin, AudioNativeConfigMixin)
-2. Capability mixins (VoiceMixin, TextChunkingMixin)
+2. Capability mixins (VoiceMixin, AudioChunkingMixin)
 3. Protocol base class (FullDuplexAgent, HalfDuplexUser)
 ```
 
@@ -306,11 +291,11 @@ class MyVoiceStreamingState(MyBaseState, StreamingState[InputMsg, OutputMsg], Vo
 
 ## Usage Examples
 
-### Example 1: Text Streaming Agent
+### Example 1: Audio Streaming Agent
 
 ```python
 from tau2.agent.base_agent import FullDuplexAgent
-from tau2.agent.base.streaming import TextChunkingMixin, StreamingState
+from tau2.agent.base.streaming import AudioChunkingMixin, StreamingState
 from tau2.agent.base.llm_config import LLMConfigMixin
 
 # Define state
@@ -318,15 +303,15 @@ class MyAgentStreamingState(LLMAgentState, StreamingState[UserMessage, Assistant
     """Combines base agent state with streaming capabilities."""
 
 # Specialize chunking mixin for your message types
-class MyAgentTextChunkingMixin(
-    TextChunkingMixin[UserMessage, AssistantMessage, MyAgentStreamingState]
+class MyAgentAudioChunkingMixin(
+    AudioChunkingMixin[UserMessage, AssistantMessage, MyAgentStreamingState]
 ):
     pass
 
 # Create concrete agent
-class MyTextStreamingAgent(
+class MyAudioStreamingAgent(
     LLMConfigMixin,
-    MyAgentTextChunkingMixin,
+    MyAgentAudioChunkingMixin,
     FullDuplexAgent[MyAgentStreamingState],
 ):
     def __init__(
@@ -335,15 +320,13 @@ class MyTextStreamingAgent(
         domain_policy: str,
         llm: str,
         llm_args: Optional[dict] = None,
-        chunk_by: str = "words",
-        chunk_size: int = 10,
+        chunk_size: int = 50,
     ):
         super().__init__(
             tools=tools,
             domain_policy=domain_policy,
             llm=llm,
             llm_args=llm_args,
-            chunk_by=chunk_by,
             chunk_size=chunk_size,
         )
     
@@ -500,7 +483,6 @@ class MyHalfDuplexAgent(
 | `HalfDuplexParticipant` | Turn-based protocol | `generate_next_message()` |
 | `FullDuplexParticipant` | Streaming protocol | `get_next_chunk()` |
 | `StreamingMixin` | Streaming implementation | `get_next_chunk()`, turn-taking |
-| `TextChunkingMixin` | Text chunking | `_create_chunk_messages()` |
 | `AudioChunkingMixin` | Audio chunking | `_create_chunk_messages()` |
 | `VoiceMixin` | Voice transcription/synthesis | `transcribe_voice()`, `synthesize_voice()` |
 | `LLMConfigMixin` | LLM configuration | `llm`, `llm_args`, `set_seed()` |
@@ -510,7 +492,7 @@ class MyHalfDuplexAgent(
 **To create a new participant:**
 
 1. Choose protocol: `HalfDuplexAgent`/`FullDuplexAgent` (or User equivalents)
-2. Add capabilities: `LLMConfigMixin`, `VoiceMixin`, `TextChunkingMixin`, etc.
+2. Add capabilities: `LLMConfigMixin`, `VoiceMixin`, `AudioChunkingMixin`, etc.
 3. Define state class: Combine base state with capability states
 4. Implement required methods: `get_init_state()`, and either `generate_next_message()` or turn-taking methods
 5. Follow inheritance order: Config mixins → Capability mixins → Protocol base
