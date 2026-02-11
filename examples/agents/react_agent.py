@@ -27,12 +27,14 @@ from typing import Optional
 
 from loguru import logger
 
-from tau2.agent.base_agent import HalfDuplexAgent
+from tau2.agent.base_agent import HalfDuplexAgent, ValidAgentInputMessage
 from tau2.data_model.message import (
+    APICompatibleMessage,
     AssistantMessage,
     Message,
     MultiToolMessage,
-    ValidAgentInputMessage,
+    SystemMessage,
+    UserMessage,
 )
 from tau2.environment.toolkit import Tool
 from tau2.utils.llm_utils import generate
@@ -77,7 +79,11 @@ Your reasoning was:
 class ReActAgentState:
     """Conversation state for the ReAct agent."""
 
-    def __init__(self, system_messages: list[dict], messages: list[dict]):
+    def __init__(
+        self,
+        system_messages: list[SystemMessage],
+        messages: list[APICompatibleMessage],
+    ):
         self.system_messages = system_messages
         self.messages = messages
 
@@ -108,12 +114,8 @@ class ReActAgent(HalfDuplexAgent[ReActAgentState]):
         self, message_history: Optional[list[Message]] = None
     ) -> ReActAgentState:
         system_content = SYSTEM_PROMPT.format(domain_policy=self.domain_policy)
-        system_messages = [{"role": "system", "content": system_content}]
-        messages = []
-
-        if message_history:
-            for msg in message_history:
-                messages.append(msg.model_dump())
+        system_messages = [SystemMessage(role="system", content=system_content)]
+        messages = list(message_history) if message_history else []
 
         return ReActAgentState(
             system_messages=system_messages,
@@ -127,12 +129,9 @@ class ReActAgent(HalfDuplexAgent[ReActAgentState]):
     ) -> tuple[AssistantMessage, ReActAgentState]:
         # Add incoming message(s) to state
         if isinstance(message, MultiToolMessage):
-            for tool_msg in message.tool_messages:
-                state.messages.append(tool_msg.model_dump())
+            state.messages.extend(message.tool_messages)
         else:
-            state.messages.append(
-                {"role": message.role.value, "content": str(message.content)}
-            )
+            state.messages.append(message)
 
         # Phase 1: THINK -- reason about the situation (no tools)
         reasoning = self._think(state)
@@ -143,7 +142,7 @@ class ReActAgent(HalfDuplexAgent[ReActAgentState]):
 
         # Store the action in conversation history
         # (reasoning is ephemeral -- not stored in history)
-        state.messages.append(assistant_message.model_dump())
+        state.messages.append(assistant_message)
 
         return assistant_message, state
 
@@ -152,7 +151,7 @@ class ReActAgent(HalfDuplexAgent[ReActAgentState]):
         think_messages = (
             state.system_messages
             + state.messages
-            + [{"role": "user", "content": THINK_PROMPT}]
+            + [UserMessage(role="user", content=THINK_PROMPT)]
         )
 
         # Call LLM without tools -- forces text-only reasoning
@@ -172,7 +171,7 @@ class ReActAgent(HalfDuplexAgent[ReActAgentState]):
         act_messages = (
             state.system_messages
             + state.messages
-            + [{"role": "user", "content": act_instruction}]
+            + [UserMessage(role="user", content=act_instruction)]
         )
 
         # Call LLM with tools -- can choose to call a tool or respond
@@ -237,7 +236,7 @@ if __name__ == "__main__":
         if msg.content:
             print(f"  [{role}] {str(msg.content)[:120]}")
         elif hasattr(msg, "tool_calls") and msg.tool_calls:
-            names = [tc.function.name for tc in msg.tool_calls]
+            names = [tc.name for tc in msg.tool_calls]
             print(f"  [{role}] Tool calls: {names}")
         else:
             print(f"  [{role}] (tool result)")

@@ -22,14 +22,14 @@ The fastest way to run simulations is through the `tau2 run` command:
 
 ```bash
 # Run all airline tasks with GPT-4.1
-tau2 run --domain airline --agent llm_agent --llm-agent openai/gpt-4.1
+tau2 run --domain airline --agent llm_agent --agent-llm openai/gpt-4.1
 
 # Run specific tasks with multiple trials
-tau2 run --domain retail --agent llm_agent --llm-agent openai/gpt-4.1 \
-    --task-ids task_001 task_002 --num-trials 3
+tau2 run --domain retail --agent llm_agent --agent-llm openai/gpt-4.1 \
+    --task-ids 0 1 --num-trials 3
 
 # Run with concurrency and auto-resume
-tau2 run --domain telecom --agent llm_agent --llm-agent openai/gpt-4.1 \
+tau2 run --domain telecom --agent llm_agent --agent-llm openai/gpt-4.1 \
     --max-concurrency 4 --auto-resume
 ```
 
@@ -88,6 +88,7 @@ This handles everything: task loading, filtering, concurrency, checkpointing, me
 ### Running specific tasks
 
 ```python
+from pathlib import Path
 from tau2 import TextRunConfig
 from tau2.runner import get_tasks, run_tasks
 
@@ -98,7 +99,7 @@ config = TextRunConfig(
 )
 
 # Load and filter tasks manually
-tasks = get_tasks("airline", task_ids=["task_001", "task_002"])
+tasks = get_tasks("airline", task_ids=["0", "1"])
 
 # Run with custom save path
 results = run_tasks(

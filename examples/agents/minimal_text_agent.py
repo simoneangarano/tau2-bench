@@ -17,11 +17,16 @@ What this does:
     4. Prints the result
 """
 
-from copy import deepcopy
 from typing import Optional
 
 from tau2.agent.base_agent import HalfDuplexAgent
-from tau2.data_model.message import AssistantMessage, Message, UserMessage
+from tau2.data_model.message import (
+    APICompatibleMessage,
+    AssistantMessage,
+    Message,
+    SystemMessage,
+    UserMessage,
+)
 from tau2.environment.toolkit import Tool
 from tau2.utils.llm_utils import generate
 
@@ -30,11 +35,23 @@ from tau2.utils.llm_utils import generate
 # =============================================================================
 
 
-class MinimalAgent(HalfDuplexAgent[list[dict]]):
+class MinimalAgentState:
+    """Simple state container for the MinimalAgent."""
+
+    def __init__(
+        self,
+        system_messages: list[SystemMessage],
+        messages: list[APICompatibleMessage],
+    ):
+        self.system_messages = system_messages
+        self.messages = messages
+
+
+class MinimalAgent(HalfDuplexAgent[MinimalAgentState]):
     """A minimal agent that uses an LLM to respond to messages.
 
-    The state is simply the conversation history as a list of dicts
-    (the format expected by litellm/OpenAI).
+    The state holds the conversation history as tau2 Message objects,
+    which is the format expected by the generate() utility.
     """
 
     def __init__(
@@ -50,34 +67,36 @@ class MinimalAgent(HalfDuplexAgent[list[dict]]):
 
     def get_init_state(
         self, message_history: Optional[list[Message]] = None
-    ) -> list[dict]:
+    ) -> MinimalAgentState:
         """Build the initial conversation state with a system prompt."""
         system_prompt = (
             f"You are a helpful customer service agent.\n\n"
             f"## Domain Policy\n{self.domain_policy}\n\n"
             f"Follow the policy strictly. Use the provided tools to help the user."
         )
-        return [{"role": "system", "content": system_prompt}]
+        return MinimalAgentState(
+            system_messages=[SystemMessage(role="system", content=system_prompt)],
+            messages=list(message_history) if message_history else [],
+        )
 
     def generate_next_message(
-        self, message: UserMessage, state: list[dict]
-    ) -> tuple[AssistantMessage, list[dict]]:
+        self, message: UserMessage, state: MinimalAgentState
+    ) -> tuple[AssistantMessage, MinimalAgentState]:
         """Generate a response using the LLM."""
-        # Add the user message to the conversation
-        state = deepcopy(state)
-        state.append({"role": "user", "content": str(message.content)})
+        # Add the incoming message to state
+        state.messages.append(message)
 
-        # Call the LLM with tools
+        # Call the LLM with tools (generate expects tau2 Message objects)
         response = generate(
             model=self.llm,
             tools=self.tools,
-            messages=state,
+            messages=state.system_messages + state.messages,
             **self.llm_args,
         )
 
         # Add the response to the conversation and return
-        state.append(response.model_dump())
-        return AssistantMessage.from_llm_response(response), state
+        state.messages.append(response)
+        return response, state
 
 
 # =============================================================================

@@ -13,11 +13,16 @@ Usage:
     python examples/agents/custom_agent_eval.py
 """
 
-from copy import deepcopy
 from typing import Optional
 
 from tau2.agent.base_agent import HalfDuplexAgent
-from tau2.data_model.message import AssistantMessage, Message, UserMessage
+from tau2.data_model.message import (
+    APICompatibleMessage,
+    AssistantMessage,
+    Message,
+    SystemMessage,
+    UserMessage,
+)
 from tau2.environment.toolkit import Tool
 from tau2.utils.llm_utils import generate
 
@@ -26,7 +31,7 @@ from tau2.utils.llm_utils import generate
 # =============================================================================
 
 
-class VerboseAgent(HalfDuplexAgent[list[dict]]):
+class VerboseAgent(HalfDuplexAgent[list]):
     """An agent that logs its reasoning before acting.
 
     This demonstrates how to add custom behavior (logging, pre-processing,
@@ -44,30 +49,30 @@ class VerboseAgent(HalfDuplexAgent[list[dict]]):
         self.llm = llm
         self.llm_args = llm_args or {}
         self.call_count = 0
+        self._system_messages: list[SystemMessage] = []
 
     def get_init_state(
         self, message_history: Optional[list[Message]] = None
-    ) -> list[dict]:
+    ) -> list[APICompatibleMessage]:
         system_prompt = (
             f"You are a helpful customer service agent.\n\n"
             f"## Policy\n{self.domain_policy}\n\n"
             f"Always follow the policy. Use tools when needed."
         )
-        state = [{"role": "system", "content": system_prompt}]
+        self._system_messages = [SystemMessage(role="system", content=system_prompt)]
 
         # Replay message history if provided (e.g., for tasks with prior context)
+        state: list[APICompatibleMessage] = []
         if message_history:
-            for msg in message_history:
-                state.append(msg.model_dump())
+            state = list(message_history)
 
         return state
 
     def generate_next_message(
-        self, message: UserMessage, state: list[dict]
-    ) -> tuple[AssistantMessage, list[dict]]:
+        self, message: UserMessage, state: list[APICompatibleMessage]
+    ) -> tuple[AssistantMessage, list[APICompatibleMessage]]:
         self.call_count += 1
-        state = deepcopy(state)
-        state.append({"role": "user", "content": str(message.content)})
+        state.append(message)
 
         print(
             f"  [VerboseAgent] Turn {self.call_count}: received '{str(message.content)[:80]}...'"
@@ -76,22 +81,21 @@ class VerboseAgent(HalfDuplexAgent[list[dict]]):
         response = generate(
             model=self.llm,
             tools=self.tools,
-            messages=state,
+            messages=self._system_messages + state,
             **self.llm_args,
         )
 
         # Log what the agent decided to do
-        assistant_msg = AssistantMessage.from_llm_response(response)
-        if assistant_msg.tool_calls:
-            tool_names = [tc.function.name for tc in assistant_msg.tool_calls]
+        if response.tool_calls:
+            tool_names = [tc.name for tc in response.tool_calls]
             print(f"  [VerboseAgent] -> Calling tools: {tool_names}")
         else:
             print(
-                f"  [VerboseAgent] -> Responding with text: '{str(assistant_msg.content)[:80]}...'"
+                f"  [VerboseAgent] -> Responding with text: '{str(response.content)[:80]}...'"
             )
 
-        state.append(response.model_dump())
-        return assistant_msg, state
+        state.append(response)
+        return response, state
 
 
 # =============================================================================
@@ -176,6 +180,11 @@ if __name__ == "__main__":
         print()
         print("Evaluation:")
         print(f"  Reward: {result.reward_info.reward}")
-        if result.reward_info.reward_by_type:
-            for reward_type, score in result.reward_info.reward_by_type.items():
-                print(f"  {reward_type}: {score}")
+        if result.reward_info.db_check:
+            print(f"  DB check: {result.reward_info.db_check}")
+        if result.reward_info.action_checks:
+            for check in result.reward_info.action_checks:
+                print(f"  Action check: {check}")
+        if result.reward_info.env_assertions:
+            for assertion in result.reward_info.env_assertions:
+                print(f"  Env assertion: {assertion}")

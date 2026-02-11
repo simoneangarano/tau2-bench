@@ -46,13 +46,6 @@ uv run tau2 check-data
 
 This checks that your data directory is correctly configured and all required files are present.
 
-### Cleanup
-
-To remove all generated files and the virtual environment:
-```bash
-make clean
-```
-
 ## Setting Up API Keys
 
 We use [LiteLLM](https://github.com/BerriAI/litellm) to manage LLM APIs, so you can use any LLM provider supported by LiteLLM.
@@ -137,6 +130,14 @@ LLM call caching is disabled by default. To enable it:
 1. Make sure `redis` is running
 2. Update the redis config in `config.py` if necessary
 3. Set `LLM_CACHE_ENABLED` to `True` in `config.py`
+
+## Cleanup
+
+To remove all generated files and the virtual environment:
+
+```bash
+make clean
+```
 
 ## Next Steps
 
