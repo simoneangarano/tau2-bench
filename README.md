@@ -55,10 +55,10 @@ Each domain specifies:
 ```bash
 git clone https://github.com/sierra-research/tau2-bench
 cd tau2-bench
-pip install -e .
+uv sync
 ```
 
-See the [full installation guide](docs/getting-started.md) for environment setup, ffmpeg, and voice dependencies.
+This requires [uv](https://docs.astral.sh/uv/getting-started/installation/). See the [full installation guide](docs/getting-started.md) for details on ffmpeg and voice dependencies.
 
 ### 2. Set up API keys
 

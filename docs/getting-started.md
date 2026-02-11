@@ -2,6 +2,11 @@
 
 This guide walks you through installing τ²-bench, configuring API keys, and running your first evaluation.
 
+## Prerequisites
+
+- [uv](https://docs.astral.sh/uv/getting-started/installation/) — Python package and project manager
+- Python 3.12+ (uv will download it automatically if not present)
+
 ## Installation
 
 ### 1. Clone the repository
@@ -11,16 +16,7 @@ git clone https://github.com/sierra-research/tau2-bench
 cd tau2-bench
 ```
 
-### 2. Create a virtual environment (optional)
-
-τ²-bench requires Python 3.10+, but only up to 3.12 (due to `pyaudioop` support needed for voice features).
-
-```bash
-python3.12 -m venv .venv
-source .venv/bin/activate
-```
-
-### 3. Install ffmpeg (required for voice features)
+### 2. Install ffmpeg (required for voice features)
 
 If you plan to use voice-enabled features, install ffmpeg first:
 
@@ -29,23 +25,23 @@ If you plan to use voice-enabled features, install ffmpeg first:
 brew install ffmpeg
 ```
 
-### 4. Install τ²-bench
+### 3. Install τ²-bench
 
 ```bash
-pip install -e .
+uv sync
 ```
 
-This enables the `tau2` command.
+This creates a virtual environment, installs all dependencies from the lockfile, and enables the `tau2` command. The Python version is pinned via `.python-version` (3.12) — uv will download it automatically if needed.
 
-> **Note:** If you use `pip install .` (without `-e`), you'll need to set the `TAU2_DATA_DIR` environment variable to point to your data directory:
+> **Note:** If you install without `-e` mode (e.g., `uv pip install .`), you'll need to set the `TAU2_DATA_DIR` environment variable to point to your data directory:
 > ```bash
 > export TAU2_DATA_DIR=/path/to/your/tau2-bench/data
 > ```
 
-### 5. Verify your installation
+### 4. Verify your installation
 
 ```bash
-tau2 check-data
+uv run tau2 check-data
 ```
 
 This checks that your data directory is correctly configured and all required files are present.

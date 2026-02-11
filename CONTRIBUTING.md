@@ -105,22 +105,20 @@ new-stuff
 git clone https://github.com/your-username/tau2-bench.git
 cd tau2-bench
 
-# Create and activate virtual environment
-python -m venv .venv
-source .venv/bin/activate  # On Windows: .venv\Scripts\activate
-
-# Install in development mode
-pip install -e .
+# Install dependencies (creates venv, installs from lockfile)
+uv sync
 
 # Verify installation
-tau2 check-data
+uv run tau2 check-data
 ```
+
+This requires [uv](https://docs.astral.sh/uv/getting-started/installation/). The Python version (3.12) is pinned via `.python-version` — uv will download it automatically if needed.
 
 ### 2. Development Dependencies
 The project uses several tools for code quality:
+- **uv**: Package and project management
 - **Ruff**: Linting and code formatting
 - **pytest**: Testing framework
-- **PDM**: Package management
 
 ### 3. Environment Variables
 Copy `.env.example` to `.env` and configure your API keys for testing.

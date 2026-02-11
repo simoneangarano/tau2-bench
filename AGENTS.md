@@ -9,10 +9,8 @@
 ## Setup
 
 ```bash
-python3.12 -m venv .venv
-source .venv/bin/activate
-pip install -e .
-tau2 check-data  # verify installation
+uv sync           # create venv, install deps from lockfile
+uv run tau2 check-data  # verify installation
 ```
 
 Environment variables: copy `.env.example` to `.env` and set API keys. Uses [LiteLLM](https://github.com/BerriAI/litellm) for LLM provider abstraction.
