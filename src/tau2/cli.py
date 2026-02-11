@@ -1,4 +1,5 @@
 import argparse
+import importlib.metadata
 import json
 
 from tau2.config import (
@@ -385,6 +386,153 @@ def add_run_args(parser):
     )
 
 
+def _get_version() -> str:
+    """Get the package version from metadata, falling back to pyproject.toml."""
+    try:
+        return importlib.metadata.version("tau2")
+    except importlib.metadata.PackageNotFoundError:
+        return "dev"
+
+
+def run_intro():
+    """Display a rich intro page describing what tau2-bench can do."""
+    from rich import box
+    from rich.console import Console
+    from rich.panel import Panel
+    from rich.table import Table
+    from rich.text import Text
+
+    console = Console()
+    version = _get_version()
+
+    # ── Banner ──────────────────────────────────────────────────────────
+    banner = Text(justify="center")
+    banner.append("\n")
+    banner.append("tau2-bench", style="bold cyan")
+    banner.append(f"  v{version}\n", style="dim")
+    banner.append(
+        "A simulation framework for evaluating\n"
+        "conversational customer-service agents\n",
+        style="italic",
+    )
+    console.print(
+        Panel(
+            banner,
+            border_style="cyan",
+            padding=(1, 4),
+        )
+    )
+
+    # ── Modes ───────────────────────────────────────────────────────────
+    modes_table = Table(
+        title="Communication Modes",
+        box=box.SIMPLE_HEAVY,
+        title_style="bold magenta",
+        show_edge=False,
+        pad_edge=False,
+        padding=(0, 2),
+    )
+    modes_table.add_column("Mode", style="bold", no_wrap=True)
+    modes_table.add_column("Description")
+    modes_table.add_row(
+        "Half-duplex (text)",
+        "Turn-based text conversations. Agent and user take turns exchanging messages.",
+    )
+    modes_table.add_row(
+        "Full-duplex (voice)",
+        "Real-time audio-native voice using streaming APIs (OpenAI, Gemini, xAI, Nova, Qwen, Deepgram).",
+    )
+    console.print(modes_table)
+    console.print()
+
+    # ── Domains ─────────────────────────────────────────────────────────
+    domain_table = Table(
+        title="Domains",
+        box=box.SIMPLE_HEAVY,
+        title_style="bold magenta",
+        show_edge=False,
+        pad_edge=False,
+        padding=(0, 2),
+    )
+    domain_table.add_column("Domain", style="bold", no_wrap=True)
+    domain_table.add_column("Description")
+    domain_table.add_row(
+        "airline", "Flight booking, cancellation, and customer support"
+    )
+    domain_table.add_row("retail", "Order management, returns, and product inquiries")
+    domain_table.add_row("telecom", "Telecom account management and troubleshooting")
+    domain_table.add_row("mock", "Lightweight test domain for development")
+    console.print(domain_table)
+    console.print()
+
+    # ── Commands ────────────────────────────────────────────────────────
+    cmd_table = Table(
+        title="Commands",
+        box=box.SIMPLE_HEAVY,
+        title_style="bold magenta",
+        show_edge=False,
+        pad_edge=False,
+        padding=(0, 2),
+    )
+    cmd_table.add_column("Command", style="bold green", no_wrap=True)
+    cmd_table.add_column("What it does")
+    cmd_table.add_row("tau2 run", "Run a benchmark evaluation against a domain")
+    cmd_table.add_row("tau2 view", "Browse and inspect simulation results")
+    cmd_table.add_row(
+        "tau2 play", "Interactive manual mode \u2014 play the agent yourself"
+    )
+    cmd_table.add_row("tau2 domain <name>", "Show detailed documentation for a domain")
+    cmd_table.add_row("tau2 leaderboard", "Display the current leaderboard")
+    cmd_table.add_row(
+        "tau2 review <path>", "Run LLM-based conversation review on results"
+    )
+    cmd_table.add_row(
+        "tau2 evaluate-trajs <paths>", "Re-evaluate trajectories and recompute rewards"
+    )
+    cmd_table.add_row("tau2 submit prepare", "Prepare a leaderboard submission")
+    cmd_table.add_row("tau2 submit validate", "Validate a submission directory")
+    cmd_table.add_row("tau2 check-data", "Verify data directory is set up correctly")
+    cmd_table.add_row("tau2 start", "Start background servers")
+    cmd_table.add_row("tau2 intro", "Show this page")
+    console.print(cmd_table)
+    console.print()
+
+    # ── Quick Start ─────────────────────────────────────────────────────
+    from rich.syntax import Syntax
+
+    quick_start = (
+        "# 1. Verify your setup\n"
+        "tau2 check-data\n"
+        "\n"
+        "# 2. Run a text (half-duplex) evaluation\n"
+        "tau2 run --domain airline --agent-llm gpt-4.1 --user-llm gpt-4.1 "
+        "--num-trials 1 --num-tasks 5\n"
+        "\n"
+        "# 3. Run a voice (full-duplex) evaluation\n"
+        "tau2 run --domain retail --audio-native --num-tasks 1 --verbose-logs\n"
+        "\n"
+        "# 4. Browse results\n"
+        "tau2 view\n"
+        "\n"
+        "# 5. Check the leaderboard\n"
+        "tau2 leaderboard"
+    )
+    console.print(
+        Panel(
+            Syntax(quick_start, "bash", theme="monokai", line_numbers=False),
+            title="[bold yellow]Quick Start[/bold yellow]",
+            border_style="yellow",
+            padding=(1, 2),
+        )
+    )
+
+    # ── Tip ─────────────────────────────────────────────────────────────
+    console.print(
+        "\n[dim]Tip: Run any command with [bold]--help[/bold] for detailed usage, "
+        "e.g. [bold green]tau2 run --help[/bold green][/dim]\n"
+    )
+
+
 def main():
     parser = argparse.ArgumentParser(description="Tau2 command line interface")
     subparsers = parser.add_subparsers(dest="command", help="Available commands")
@@ -535,6 +683,12 @@ def main():
     # Start command
     start_parser = subparsers.add_parser("start", help="Start all servers")
     start_parser.set_defaults(func=lambda args: run_start_servers())
+
+    # Intro command
+    intro_parser = subparsers.add_parser(
+        "intro", help="Show an overview of tau2-bench and available commands"
+    )
+    intro_parser.set_defaults(func=lambda args: run_intro())
 
     # Check data command
     check_data_parser = subparsers.add_parser(
@@ -714,7 +868,7 @@ def main():
 
     args = parser.parse_args()
     if not hasattr(args, "func"):
-        parser.print_help()
+        run_intro()
         return
 
     args.func(args)
