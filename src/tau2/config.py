@@ -101,7 +101,7 @@ DEFAULT_USE_LLM_BACKCHANNEL = True  # Use LLM-based backchannel policy (vs Poiss
 
 # Agent behavior
 DEFAULT_BUFFER_UNTIL_COMPLETE = True
-DEFAULT_FAST_FORWARD_MODE = True
+DEFAULT_FAST_FORWARD_MODE = False
 DEFAULT_SEND_AUDIO_INSTANT = True
 
 # Speech complexity for user simulator

@@ -90,7 +90,7 @@ See the [Audio Native Documentation](../src/tau2/voice/audio_native/README.md) f
 
 > **Note**: Text full-duplex and voice half-duplex modes are available via the Python API but are not currently exposed through the CLI. See the [Orchestrator documentation](../src/tau2/orchestrator/README.md) and [Voice documentation](../src/tau2/voice/README.md) for programmatic usage.
 
-> **Tip**: For full agent evaluation that matches the original τ²-bench methodology, remove `--num-tasks` and use `--task-split base` to evaluate on the complete task set.
+> **tip**: for full agent evaluation that matches the original τ²-bench methodology, remove `--num-tasks` to evaluate on the complete task set (the `base` split is used by default).
 
 ## Simulation Output Structure
 

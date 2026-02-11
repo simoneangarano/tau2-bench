@@ -1,6 +1,6 @@
 import pytest
 
-from tau2.agent.llm_streaming_agent import TextStreamingLLMAgent
+from experiments.tau_voice.agents.llm_streaming_agent import TextStreamingLLMAgent
 from tau2.data_model.message import AssistantMessage, UserMessage
 
 

@@ -14,7 +14,6 @@ import tau2.runner as runner
 from tau2.agent.base.llm_config import LLMConfigMixin
 from tau2.agent.base_agent import FullDuplexAgent, HalfDuplexAgent
 from tau2.agent.llm_agent import LLMAgent, LLMSoloAgent
-from tau2.agent.llm_streaming_agent import TextStreamingLLMAgent
 from tau2.data_model.simulation import (
     BaseRunConfig,
     RunConfig,
@@ -34,7 +33,7 @@ from tau2.registry import Registry, registry
 from tau2.run import run_domain
 from tau2.user.user_simulator import UserSimulator
 from tau2.user.user_simulator_base import FullDuplexUser, HalfDuplexUser
-from tau2.user.user_simulator_streaming import TextStreamingUserSimulator
+from tau2.user.user_simulator_streaming import VoiceStreamingUserSimulator
 from tau2.utils.display import ConsoleDisplay, MarkdownDisplay
 
 # =============================================================================
@@ -99,8 +98,7 @@ __all__ = [
     "runner",
     # Streaming
     "CommunicationMode",
-    "TextStreamingLLMAgent",
-    "TextStreamingUserSimulator",
+    "VoiceStreamingUserSimulator",
     # Utils
     "ConsoleDisplay",
     "MarkdownDisplay",

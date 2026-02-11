@@ -12,7 +12,7 @@ This test suite verifies that voice streaming works correctly with:
 
 import pytest
 
-from tau2.agent.llm_streaming_agent import VoiceStreamingLLMAgent
+from experiments.tau_voice.agents.llm_streaming_agent import VoiceStreamingLLMAgent
 from tau2.data_model.message import AssistantMessage, UserMessage
 from tau2.data_model.voice import SynthesisConfig, TranscriptionConfig, VoiceSettings
 from tau2.domains.mock.environment import get_environment, get_tasks

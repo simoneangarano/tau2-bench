@@ -13,7 +13,7 @@ from tau2.user.user_simulator_base import (
     UserState,
     ValidUserInputMessage,
 )
-from tau2.user.user_simulator_streaming import TextStreamingUserSimulator
+from tau2.user.user_simulator_streaming import VoiceStreamingUserSimulator
 
 # =============================================================================
 # DEPRECATION ALIASES
@@ -59,10 +59,9 @@ __all__ = [
     # User simulators
     "UserSimulator",
     "DummyUser",
-    # Streaming users
-    "TextStreamingUserSimulator",
     # Voice users
     "VoiceUserSimulator",
+    "VoiceStreamingUserSimulator",
     # Deprecated aliases (kept for backward compatibility)
     "BaseUser",
     "BaseStreamingUser",

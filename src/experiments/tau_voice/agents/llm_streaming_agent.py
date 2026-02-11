@@ -2,12 +2,12 @@ from typing import List, Optional, Tuple
 
 from loguru import logger
 
+from experiments.tau_voice.utils.text_chunking import TextChunkingMixin
 from tau2.agent.base.llm_config import LLMConfigMixin
 from tau2.agent.base.streaming import (
     AudioChunkingMixin,
     LinearizationStrategy,
     StreamingState,
-    TextChunkingMixin,
     basic_turn_taking_policy,
     merge_homogeneous_chunks,
 )

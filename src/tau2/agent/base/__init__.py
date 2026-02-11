@@ -24,7 +24,6 @@ from tau2.agent.base.streaming import (
     BasicActionType,
     StreamingMixin,
     StreamingState,
-    TextChunkingMixin,
     basic_turn_taking_policy,
     merge_homogeneous_chunks,
 )
@@ -36,9 +35,7 @@ from tau2.agent.base.streaming_utils import (
     extract_chunks_with_text,
     extract_gold_text,
     extract_message_uuid,
-    format_chunks_inline,
     format_transcript_comparison,
-    get_missing_chunk_ids,
     merge_audio_script_gold,
 )
 
@@ -82,7 +79,6 @@ __all__ = [
     # Streaming components
     "StreamingMixin",
     "StreamingState",
-    "TextChunkingMixin",
     "AudioChunkingMixin",
     "BasicActionType",
     "basic_turn_taking_policy",
@@ -91,12 +87,10 @@ __all__ = [
     "extract_message_uuid",
     "extract_active_chunk_ids",
     "extract_all_chunk_ids",
-    "get_missing_chunk_ids",
     "merge_audio_script_gold",
     "extract_gold_text",
     "extract_chunks_with_text",
     "format_transcript_comparison",
-    "format_chunks_inline",
     # Voice components
     "VoiceMixin",
     "VoiceState",

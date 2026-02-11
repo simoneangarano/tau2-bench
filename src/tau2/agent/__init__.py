@@ -2,16 +2,14 @@ import warnings
 
 from tau2.agent.base.llm_config import LLMConfigMixin
 from tau2.agent.base.participant import FullDuplexParticipant, HalfDuplexParticipant
-from tau2.agent.base.streaming import StreamingMixin, StreamingState, TextChunkingMixin
+from tau2.agent.base.streaming import StreamingMixin, StreamingState
 from tau2.agent.base.streaming_utils import (
     extract_active_chunk_ids,
     extract_all_chunk_ids,
     extract_chunks_with_text,
     extract_gold_text,
     extract_message_uuid,
-    format_chunks_inline,
     format_transcript_comparison,
-    get_missing_chunk_ids,
     merge_audio_script_gold,
 )
 from tau2.agent.base_agent import (
@@ -22,8 +20,6 @@ from tau2.agent.base_agent import (
     ValidAgentInputMessage,
 )
 from tau2.agent.llm_agent import LLMAgent, LLMAgentState, LLMGTAgent, LLMSoloAgent
-from tau2.agent.llm_streaming_agent import LLMAgentStreamingState, TextStreamingLLMAgent
-from tau2.agent.voice_agent import VoiceLLMAgent, VoiceLLMGTAgent
 from tau2.voice.audio_native.openai import OpenAIRealtimeProvider
 from tau2.voice.audio_native.openai.provider import OpenAIVADMode
 
@@ -75,17 +71,14 @@ __all__ = [
     # Generic streaming mixins
     "StreamingMixin",
     "StreamingState",
-    "TextChunkingMixin",
     # Streaming utilities
     "extract_message_uuid",
     "extract_active_chunk_ids",
     "extract_all_chunk_ids",
-    "get_missing_chunk_ids",
     "merge_audio_script_gold",
     "extract_gold_text",
     "extract_chunks_with_text",
     "format_transcript_comparison",
-    "format_chunks_inline",
     # Agent-specific base classes
     "HalfDuplexAgent",
     "FullDuplexAgent",
@@ -97,12 +90,7 @@ __all__ = [
     "LLMAgentState",
     "LLMGTAgent",
     "LLMSoloAgent",
-    # Streaming agents
-    "TextStreamingLLMAgent",
-    "LLMAgentStreamingState",
-    # Voice Agents
-    "VoiceLLMAgent",
-    "VoiceLLMGTAgent",
+    # Audio Native
     "OpenAIRealtimeProvider",
     "OpenAIVADMode",
     # Deprecated aliases (kept for backward compatibility)

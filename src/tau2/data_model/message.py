@@ -4,7 +4,6 @@ from typing import Literal, Optional
 
 from pydantic import BaseModel, Field, field_validator
 
-from tau2.agent.base.streaming_utils import merge_audio_script_gold
 from tau2.data_model.audio import (
     AudioFormat,
     audio_bytes_to_string,
@@ -397,7 +396,10 @@ class ParticipantMessageBase(BaseModel):
             )
             merged_audio_content = audio_bytes_to_string(merged_audio_bytes)
 
-            # Merge audio_script_gold from chunks
+            # Merge audio_script_gold from chunks (lazy import to avoid circular
+            # dependency: message -> agent.base.streaming_utils -> agent.__init__ -> message)
+            from tau2.agent.base.streaming_utils import merge_audio_script_gold
+
             script_golds = [chunk.audio_script_gold for chunk in chunks]
             merged_script_gold = merge_audio_script_gold(script_golds)
 

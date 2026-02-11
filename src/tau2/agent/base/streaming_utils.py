@@ -62,20 +62,6 @@ def extract_all_chunk_ids(script_gold: str) -> set[int]:
     return {int(m.group(1)) for m in re.finditer(r"<chunk id=(\d+)>", script_gold)}
 
 
-def get_missing_chunk_ids(script_gold: str) -> set[int]:
-    """Get chunk IDs that are in the template but were not received.
-
-    Args:
-        script_gold: The audio_script_gold string to parse.
-
-    Returns:
-        Set of chunk IDs that are missing (in template but not in active list).
-    """
-    all_ids = extract_all_chunk_ids(script_gold)
-    active_ids = extract_active_chunk_ids(script_gold)
-    return all_ids - active_ids
-
-
 def merge_audio_script_gold(script_golds: list[str | None]) -> str | None:
     """Merge multiple audio_script_gold strings, handling multiple messages.
 
@@ -240,32 +226,3 @@ def format_transcript_comparison(
             lines.append(f"   [{status}] {chunk_id:2d}: {display_text}")
 
     return "\n".join(lines)
-
-
-def format_chunks_inline(
-    script_gold: str,
-    received_marker: str = "▓",
-    missing_marker: str = "░",
-) -> str:
-    """Format chunks inline showing received vs missing visually.
-
-    Args:
-        script_gold: The audio_script_gold string with chunk info.
-        received_marker: Character to mark received chunks (default: ▓).
-        missing_marker: Character to mark missing chunks (default: ░).
-
-    Returns:
-        Formatted string with visual chunk markers.
-
-    Example:
-        "▓Hello ░world ▓!" for active="0,2" with 3 chunks
-    """
-    active_ids = extract_active_chunk_ids(script_gold)
-    chunks = extract_chunks_with_text(script_gold)
-
-    parts = []
-    for chunk_id, text in chunks:
-        marker = received_marker if chunk_id in active_ids else missing_marker
-        parts.append(f"{marker}{text}")
-
-    return "".join(parts)

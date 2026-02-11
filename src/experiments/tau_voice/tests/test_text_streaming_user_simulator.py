@@ -1,7 +1,9 @@
 import pytest
 
+from experiments.tau_voice.users.text_streaming_user_simulator import (
+    TextStreamingUserSimulator,
+)
 from tau2.data_model.message import AssistantMessage, UserMessage
-from tau2.user.user_simulator_streaming import TextStreamingUserSimulator
 
 
 @pytest.fixture

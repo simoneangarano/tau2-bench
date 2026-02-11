@@ -1,6 +1,6 @@
 import pytest
 
-from tau2 import LLMAgent, Orchestrator, TextStreamingLLMAgent, UserSimulator
+from tau2 import LLMAgent, Orchestrator, UserSimulator
 from tau2.data_model.message import AssistantMessage, UserMessage
 from tau2.orchestrator.full_duplex_orchestrator import FullDuplexOrchestrator
 from tau2.orchestrator.modes import CommunicationMode
@@ -77,26 +77,30 @@ class TestCommunicationModes:
             )
 
     def test_full_duplex_requires_streaming_user(self, mock_agent_setup):
-        """FullDuplexOrchestrator requires streaming-capable user."""
+        """FullDuplexOrchestrator requires streaming-capable user.
+
+        Note: The full version of this test (using TextStreamingLLMAgent) is in
+        src/experiments/tau_voice/tests/test_streaming_integration.py.
+        Here we verify the validation using a minimal mock with get_next_chunk.
+        """
         from tau2.registry import registry
         from tau2.run import get_tasks
 
         tools, domain_policy = mock_agent_setup
-
-        # Create streaming agent
-        streaming_agent = TextStreamingLLMAgent(
-            tools=tools,
-            domain_policy=domain_policy,
-            llm="gpt-4",
-            chunk_by="words",
-            chunk_size=10,
-        )
 
         # Create regular (non-streaming) user
         user = UserSimulator(
             instructions="Test user",
             llm="gpt-4",
         )
+
+        # Create a minimal mock that satisfies FullDuplexAgent's interface
+        class _MockStreamingAgent:
+            def get_next_chunk(self, state, chunk):
+                pass
+
+            def get_init_state(self, message_history=None):
+                pass
 
         env_constructor = registry.get_env_constructor("mock")
         env = env_constructor()
@@ -106,7 +110,7 @@ class TestCommunicationModes:
         with pytest.raises(ValueError, match="get_next_chunk"):
             FullDuplexOrchestrator(
                 domain="mock",
-                agent=streaming_agent,
+                agent=_MockStreamingAgent(),
                 user=user,  # Regular user doesn't have get_next_chunk
                 environment=env,
                 task=task,

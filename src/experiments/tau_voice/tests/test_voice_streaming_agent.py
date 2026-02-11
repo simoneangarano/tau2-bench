@@ -13,7 +13,7 @@ import base64
 
 import pytest
 
-from tau2.agent.llm_streaming_agent import VoiceStreamingLLMAgent
+from experiments.tau_voice.agents.llm_streaming_agent import VoiceStreamingLLMAgent
 from tau2.data_model.audio import AudioEncoding, AudioFormat
 from tau2.data_model.message import AssistantMessage, UserMessage
 from tau2.data_model.voice import SynthesisConfig, TranscriptionConfig, VoiceSettings

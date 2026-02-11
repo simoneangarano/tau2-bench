@@ -2,12 +2,14 @@ from typing import Callable
 
 import pytest
 
-from tau2.agent.llm_streaming_agent import TextStreamingLLMAgent
+from experiments.tau_voice.agents.llm_streaming_agent import TextStreamingLLMAgent
+from experiments.tau_voice.users.text_streaming_user_simulator import (
+    TextStreamingUserSimulator,
+)
 from tau2.data_model.tasks import Task
 from tau2.environment.environment import Environment
 from tau2.orchestrator.full_duplex_orchestrator import FullDuplexOrchestrator
 from tau2.orchestrator.modes import CommunicationMode
-from tau2.user.user_simulator_streaming import TextStreamingUserSimulator
 
 
 @pytest.fixture
