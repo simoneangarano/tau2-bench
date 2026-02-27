@@ -4,8 +4,12 @@ import asyncio
 import json
 import os
 import time
-import tomllib
 from typing import Optional
+
+try:
+    import tomllib  # Python 3.11+
+except ModuleNotFoundError:
+    import tomli as tomllib  # Python 3.10 fallback
 
 import dotenv
 import gymnasium as gym
